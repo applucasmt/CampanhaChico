@@ -4,6 +4,7 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Painel Administrativo - Portfólio</title>
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🔐</text></svg>">
   <style>
     * {
       margin: 0;
@@ -90,6 +91,34 @@
 
     button.logout {
       background: #666;
+    }
+
+    button.add-category-btn {
+      background: linear-gradient(135deg, #f39c12, #e67e22);
+      width: auto;
+      padding: 8px 20px;
+    }
+
+    .category-management {
+      background: #f9f9f9;
+      padding: 20px;
+      border-radius: 15px;
+      margin-bottom: 30px;
+    }
+
+    .category-input-group {
+      display: flex;
+      gap: 10px;
+      align-items: end;
+    }
+
+    .category-input-group input {
+      flex: 1;
+    }
+
+    .category-input-group button {
+      width: auto;
+      white-space: nowrap;
     }
 
     .file-list {
@@ -237,27 +266,6 @@
       font-weight: 500;
     }
 
-    .progress-bar {
-      width: 100%;
-      height: 6px;
-      background: #e0e0e0;
-      border-radius: 3px;
-      margin-top: 10px;
-      overflow: hidden;
-      display: none;
-    }
-
-    .progress-bar.active {
-      display: block;
-    }
-
-    .progress-fill {
-      height: 100%;
-      background: linear-gradient(90deg, #2d5016, #7ab648);
-      width: 0%;
-      transition: width 0.3s ease;
-    }
-
     .back-link {
       display: inline-block;
       margin-bottom: 20px;
@@ -296,6 +304,10 @@
       .file-actions {
         width: 100%;
       }
+      
+      .category-input-group {
+        flex-direction: column;
+      }
     }
   </style>
 </head>
@@ -320,6 +332,16 @@
 
     <!-- Admin Section -->
     <div id="adminSection" class="admin-section">
+      <!-- Gerenciamento de Categorias -->
+      <div class="category-management">
+        <h3 style="color: #2d5016; margin-bottom: 15px;">📂 Gerenciar Categorias</h3>
+        <div class="category-input-group">
+          <input type="text" id="newCategoryInput" placeholder="Nome da nova categoria">
+          <button onclick="addNewCategory()" class="add-category-btn">+ Adicionar Categoria</button>
+        </div>
+        <div id="categoryMessage"></div>
+      </div>
+
       <div class="add-form">
         <h2>Adicionar Novo Arquivo</h2>
         
@@ -340,14 +362,17 @@
         </div>
         
         <div class="form-group">
-          <label>Arquivo</label>
+          <label>URL do Arquivo (opcional se usar upload)</label>
+          <input type="text" id="urlInput" placeholder="https://exemplo.com/arquivo.jpg">
+          <small style="color: #666;">Deixe em branco para fazer upload do arquivo</small>
+        </div>
+        
+        <div class="form-group">
+          <label>Ou faça upload do arquivo</label>
           <div class="file-upload-area" id="fileUploadArea" onclick="document.getElementById('fileInput').click()">
             <div class="upload-icon">📁</div>
             <div>Clique para selecionar ou arraste o arquivo aqui</div>
             <div class="file-name" id="fileNameDisplay"></div>
-            <div class="progress-bar" id="progressBar">
-              <div class="progress-fill" id="progressFill"></div>
-            </div>
           </div>
           <input type="file" id="fileInput" style="display: none;" onchange="handleFileSelect(event)">
           <div class="supported-formats" id="supportedFormats">
@@ -358,7 +383,7 @@
           </div>
         </div>
         
-        <button onclick="uploadFile()" id="uploadButton">✅ Fazer Upload</button>
+        <button onclick="addFile()" id="uploadButton">✅ Adicionar Arquivo</button>
         <button onclick="logout()" class="logout">🚪 Sair</button>
         
         <div id="adminMessage"></div>
@@ -373,25 +398,23 @@
 
   <script>
     let currentCategory = 'Jingle';
-    const categorias = ['Jingle', 'Placa Pirulito', 'Praginha'];
+    let categorias = ['Jingle', 'Placa Pirulito', 'Praginha'];
     let isLoggedIn = false;
     let selectedFile = null;
     
-    // Inicializar
+    const API_URL = 'https://script.google.com/macros/s/AKfycbwqdoWCfgflY5MzRWw0BfJJ-Cgg3XiWVpJlQfQA9OrHXD9lSyYjhIY7vbOxvwJdAzN3/exec';
+    
     document.addEventListener('DOMContentLoaded', () => {
-      criarTabsCategoria();
+      loadCategories();
       
       if (sessionStorage.getItem('adminLoggedIn') === 'true') {
         mostrarAdmin();
       }
       
       document.getElementById('passwordInput').addEventListener('keypress', (e) => {
-        if (e.key === 'Enter') {
-          login();
-        }
+        if (e.key === 'Enter') login();
       });
       
-      // Configurar drag and drop
       setupDragAndDrop();
     });
 
@@ -412,14 +435,63 @@
         uploadArea.classList.remove('dragover');
         
         const files = e.dataTransfer.files;
-        if (files.length > 0) {
-          handleFile(files[0]);
-        }
+        if (files.length > 0) handleFile(files[0]);
       });
+    }
+
+    async function loadCategories() {
+      try {
+        const response = await fetch(`${API_URL}?action=getCategories`);
+        const data = await response.json();
+        
+        if (data.categories && data.categories.length > 0) {
+          categorias = data.categories;
+          if (!categorias.includes(currentCategory)) {
+            currentCategory = categorias[0];
+          }
+        }
+        criarTabsCategoria();
+      } catch (error) {
+        console.error('Erro ao carregar categorias:', error);
+        criarTabsCategoria();
+      }
+    }
+
+    async function addNewCategory() {
+      const input = document.getElementById('newCategoryInput');
+      const categoryName = input.value.trim();
+      
+      if (!categoryName) {
+        mostrarMensagem('categoryMessage', 'Digite um nome para a categoria!', 'error');
+        return;
+      }
+      
+      try {
+        const response = await fetch(`${API_URL}?action=addCategory&category=${encodeURIComponent(categoryName)}`);
+        const data = await response.json();
+        
+        if (data.success) {
+          mostrarMensagem('categoryMessage', data.message, 'success');
+          input.value = '';
+          await loadCategories();
+          currentCategory = categoryName;
+          criarTabsCategoria();
+          carregarArquivos();
+        } else {
+          mostrarMensagem('categoryMessage', data.message, 'error');
+        }
+      } catch (error) {
+        mostrarMensagem('categoryMessage', 'Erro ao adicionar categoria', 'error');
+      }
     }
 
     function criarTabsCategoria() {
       const tabsContainer = document.getElementById('categoryTabs');
+      if (categorias.length === 0) {
+        tabsContainer.innerHTML = '<p>Nenhuma categoria criada</p>';
+        return;
+      }
+      
       tabsContainer.innerHTML = categorias.map(cat => 
         `<div class="category-tab ${cat === currentCategory ? 'active' : ''}" 
              onclick="mudarCategoria('${cat}')">${cat}</div>`
@@ -429,9 +501,7 @@
     function mudarCategoria(categoria) {
       currentCategory = categoria;
       criarTabsCategoria();
-      if (isLoggedIn) {
-        carregarArquivos();
-      }
+      if (isLoggedIn) carregarArquivos();
     }
 
     function updateFileAccept() {
@@ -439,23 +509,15 @@
       const fileInput = document.getElementById('fileInput');
       
       switch(tipo) {
-        case 'imagem':
-          fileInput.accept = 'image/*';
-          break;
-        case 'video':
-          fileInput.accept = 'video/*';
-          break;
-        case 'audio':
-          fileInput.accept = 'audio/*';
-          break;
+        case 'imagem': fileInput.accept = 'image/*'; break;
+        case 'video': fileInput.accept = 'video/*'; break;
+        case 'audio': fileInput.accept = 'audio/*'; break;
       }
     }
 
     function handleFileSelect(event) {
       const file = event.target.files[0];
-      if (file) {
-        handleFile(file);
-      }
+      if (file) handleFile(file);
     }
 
     function handleFile(file) {
@@ -479,14 +541,14 @@
         return;
       }
       
-      // Verificar tamanho (máximo 25MB)
       if (file.size > 25 * 1024 * 1024) {
-        mostrarMensagem('adminMessage', 'Arquivo muito grande! Máximo permitido: 25MB', 'error');
+        mostrarMensagem('adminMessage', 'Arquivo muito grande! Máximo: 25MB', 'error');
         return;
       }
       
       selectedFile = file;
-      document.getElementById('fileNameDisplay').textContent = `📎 ${file.name} (${formatFileSize(file.size)})`;
+      document.getElementById('fileNameDisplay').textContent = 
+        `📎 ${file.name} (${formatFileSize(file.size)})`;
     }
 
     function formatFileSize(bytes) {
@@ -499,12 +561,12 @@
       const password = document.getElementById('passwordInput').value;
       
       if (!password) {
-        mostrarMensagem('loginMessage', 'Por favor, digite a senha!', 'error');
+        mostrarMensagem('loginMessage', 'Digite a senha!', 'error');
         return;
       }
       
       try {
-        const response = await fetch(`${getApiUrl()}?action=checkPassword&password=${encodeURIComponent(password)}`);
+        const response = await fetch(`${API_URL}?action=checkPassword&password=${encodeURIComponent(password)}`);
         const data = await response.json();
         
         if (data.valid) {
@@ -522,6 +584,7 @@
     function mostrarAdmin() {
       document.getElementById('loginSection').classList.remove('active');
       document.getElementById('adminSection').classList.add('active');
+      loadCategories();
       carregarArquivos();
       updateFileAccept();
     }
@@ -534,35 +597,45 @@
       document.getElementById('passwordInput').value = '';
     }
 
-    async function uploadFile() {
+    async function addFile() {
       const titulo = document.getElementById('tituloInput').value;
       const tipo = document.getElementById('tipoInput').value;
+      const urlInput = document.getElementById('urlInput').value.trim();
       
       if (!titulo) {
-        mostrarMensagem('adminMessage', 'Por favor, insira um título!', 'error');
+        mostrarMensagem('adminMessage', 'Digite um título!', 'error');
         return;
       }
       
+      // Se tem URL, adiciona diretamente
+      if (urlInput) {
+        try {
+          const response = await fetch(`${API_URL}?action=add&category=${encodeURIComponent(currentCategory)}&titulo=${encodeURIComponent(titulo)}&tipo=${encodeURIComponent(tipo)}&url=${encodeURIComponent(urlInput)}`);
+          const data = await response.json();
+          
+          if (data.success) {
+            mostrarMensagem('adminMessage', 'Arquivo adicionado com sucesso! ✅', 'success');
+            document.getElementById('tituloInput').value = '';
+            document.getElementById('urlInput').value = '';
+            carregarArquivos();
+          } else {
+            mostrarMensagem('adminMessage', data.message || 'Erro ao adicionar', 'error');
+          }
+        } catch (error) {
+          mostrarMensagem('adminMessage', 'Erro ao adicionar arquivo', 'error');
+        }
+        return;
+      }
+      
+      // Se tem arquivo selecionado, faz upload
       if (!selectedFile) {
-        mostrarMensagem('adminMessage', 'Por favor, selecione um arquivo!', 'error');
+        mostrarMensagem('adminMessage', 'Selecione um arquivo ou informe uma URL!', 'error');
         return;
       }
       
       const uploadButton = document.getElementById('uploadButton');
-      const progressBar = document.getElementById('progressBar');
-      const progressFill = document.getElementById('progressFill');
-      
       uploadButton.disabled = true;
       uploadButton.textContent = '⏳ Enviando...';
-      progressBar.classList.add('active');
-      
-      // Simular progresso
-      let progress = 0;
-      const progressInterval = setInterval(() => {
-        progress += Math.random() * 30;
-        if (progress > 90) progress = 90;
-        progressFill.style.width = progress + '%';
-      }, 500);
       
       try {
         const formData = new FormData();
@@ -572,39 +645,28 @@
         formData.append('tipo', tipo);
         formData.append('file', selectedFile);
         
-        const response = await fetch(getApiUrl(), {
+        const response = await fetch(API_URL, {
           method: 'POST',
           body: formData
         });
         
         const data = await response.json();
         
-        clearInterval(progressInterval);
-        
         if (data.success) {
-          progressFill.style.width = '100%';
-          setTimeout(() => {
-            progressBar.classList.remove('active');
-            progressFill.style.width = '0%';
-          }, 1000);
-          
-          mostrarMensagem('adminMessage', 'Arquivo enviado com sucesso! ✅', 'success');
+          mostrarMensagem('adminMessage', 'Upload concluído! ✅', 'success');
           document.getElementById('tituloInput').value = '';
           document.getElementById('fileNameDisplay').textContent = '';
           document.getElementById('fileInput').value = '';
           selectedFile = null;
           carregarArquivos();
         } else {
-          throw new Error(data.message || 'Erro ao enviar arquivo');
+          throw new Error(data.message || 'Erro no upload');
         }
       } catch (error) {
-        clearInterval(progressInterval);
-        progressBar.classList.remove('active');
-        progressFill.style.width = '0%';
         mostrarMensagem('adminMessage', `Erro: ${error.message}`, 'error');
       } finally {
         uploadButton.disabled = false;
-        uploadButton.textContent = '✅ Fazer Upload';
+        uploadButton.textContent = '✅ Adicionar Arquivo';
       }
     }
 
@@ -613,7 +675,17 @@
       fileListDiv.innerHTML = '<p style="text-align: center; color: #666;">Carregando...</p>';
       
       try {
-        const response = await fetch(`${getApiUrl()}?action=list&category=${encodeURIComponent(currentCategory)}`);
+        const response = await fetch(`${API_URL}?action=list&category=${encodeURIComponent(currentCategory)}`);
+        
+        if (!response.ok) {
+          throw new Error(`HTTP error! status: ${response.status}`);
+        }
+        
+        const contentType = response.headers.get('content-type');
+        if (!contentType || !contentType.includes('application/json')) {
+          throw new Error('Resposta não é JSON. Verifique a URL da API.');
+        }
+        
         const data = await response.json();
         
         if (data.error) {
@@ -629,15 +701,15 @@
 
         fileListDiv.innerHTML = '';
         
+        const iconMap = {
+          'imagem': '🖼️',
+          'video': '🎬',
+          'audio': '🎵'
+        };
+        
         files.forEach(file => {
           const fileElement = document.createElement('div');
           fileElement.className = 'file-item';
-          
-          const iconMap = {
-            'imagem': '🖼️',
-            'video': '🎬',
-            'audio': '🎵'
-          };
           
           fileElement.innerHTML = `
             <div class="file-info">
@@ -653,24 +725,32 @@
         });
       } catch (error) {
         console.error('Erro ao carregar arquivos:', error);
-        fileListDiv.innerHTML = '<p style="text-align: center; color: #c0392b;">Erro ao carregar arquivos. Tente novamente.</p>';
+        fileListDiv.innerHTML = `
+          <div style="text-align: center; color: #c0392b; padding: 20px;">
+            <p>Erro ao carregar arquivos</p>
+            <p style="font-size: 0.9em;">${error.message}</p>
+            <button onclick="carregarArquivos()" 
+                    style="width: auto; margin-top: 10px; padding: 10px 20px;">
+              Tentar novamente
+            </button>
+          </div>`;
       }
     }
 
     async function deletarArquivo(id) {
-      if (confirm('Tem certeza que deseja deletar este arquivo? Esta ação não pode ser desfeita.')) {
+      if (confirm('Tem certeza que deseja deletar este arquivo?')) {
         try {
-          const response = await fetch(`${getApiUrl()}?action=delete&category=${encodeURIComponent(currentCategory)}&id=${encodeURIComponent(id)}`);
+          const response = await fetch(`${API_URL}?action=delete&category=${encodeURIComponent(currentCategory)}&id=${encodeURIComponent(id)}`);
           const data = await response.json();
           
           if (data.success) {
-            mostrarMensagem('adminMessage', 'Arquivo deletado com sucesso! 🗑️', 'success');
+            mostrarMensagem('adminMessage', 'Arquivo deletado! 🗑️', 'success');
             carregarArquivos();
           } else {
-            mostrarMensagem('adminMessage', 'Erro ao deletar arquivo', 'error');
+            mostrarMensagem('adminMessage', 'Erro ao deletar', 'error');
           }
         } catch (error) {
-          mostrarMensagem('adminMessage', 'Erro ao deletar arquivo. Tente novamente.', 'error');
+          mostrarMensagem('adminMessage', 'Erro ao deletar arquivo', 'error');
         }
       }
     }
@@ -678,13 +758,7 @@
     function mostrarMensagem(elementId, mensagem, tipo) {
       const element = document.getElementById(elementId);
       element.innerHTML = `<div class="message ${tipo}">${mensagem}</div>`;
-      setTimeout(() => {
-        element.innerHTML = '';
-      }, 5000);
-    }
-
-    function getApiUrl() {
-      return 'https://script.google.com/macros/s/AKfycbwqdoWCfgflY5MzRWw0BfJJ-Cgg3XiWVpJlQfQA9OrHXD9lSyYjhIY7vbOxvwJdAzN3/exec';
+      setTimeout(() => { element.innerHTML = ''; }, 5000);
     }
   </script>
 </body>
