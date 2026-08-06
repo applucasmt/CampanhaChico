@@ -402,6 +402,7 @@
     let isLoggedIn = false;
     let selectedFile = null;
     
+    // Atenção: Lembre-se de verificar se este link abaixo é o da implantação mais recente!
     const API_URL = 'https://script.google.com/macros/s/AKfycbz1CWxOquwHYG6hBxfcq2RckDsHPYiTYeqT-62AzceHpFOnnmFF3N1nk80_C0X6OEQtGg/exec';
     
     document.addEventListener('DOMContentLoaded', () => {
@@ -541,6 +542,7 @@
         return;
       }
       
+      // Limite do App Script / Base 64 é em torno de 25MB
       if (file.size > 25 * 1024 * 1024) {
         mostrarMensagem('adminMessage', 'Arquivo muito grande! Máximo: 25MB', 'error');
         return;
@@ -597,6 +599,7 @@
       document.getElementById('passwordInput').value = '';
     }
 
+    // NOVA FUNÇÃO: Envia o arquivo como Base64 para não dar erro de CORS
     async function addFile() {
       const titulo = document.getElementById('tituloInput').value;
       const tipo = document.getElementById('tipoInput').value;
@@ -607,7 +610,7 @@
         return;
       }
       
-      // Se tem URL, adiciona diretamente
+      // Se tem URL, adiciona diretamente (modo antigo)
       if (urlInput) {
         try {
           const response = await fetch(`${API_URL}?action=add&category=${encodeURIComponent(currentCategory)}&titulo=${encodeURIComponent(titulo)}&tipo=${encodeURIComponent(tipo)}&url=${encodeURIComponent(urlInput)}`);
@@ -627,7 +630,7 @@
         return;
       }
       
-      // Se tem arquivo selecionado, faz upload
+      // Se tem arquivo selecionado, faz upload via Base64
       if (!selectedFile) {
         mostrarMensagem('adminMessage', 'Selecione um arquivo ou informe uma URL!', 'error');
         return;
@@ -635,39 +638,58 @@
       
       const uploadButton = document.getElementById('uploadButton');
       uploadButton.disabled = true;
-      uploadButton.textContent = '⏳ Enviando...';
+      uploadButton.textContent = '⏳ Enviando... Pode demorar dependendo do tamanho.';
       
-      try {
-        const formData = new FormData();
-        formData.append('action', 'upload');
-        formData.append('categoria', currentCategory);
-        formData.append('titulo', titulo);
-        formData.append('tipo', tipo);
-        formData.append('file', selectedFile);
-        
-        const response = await fetch(API_URL, {
-          method: 'POST',
-          body: formData
-        });
-        
-        const data = await response.json();
-        
-        if (data.success) {
-          mostrarMensagem('adminMessage', 'Upload concluído! ✅', 'success');
-          document.getElementById('tituloInput').value = '';
-          document.getElementById('fileNameDisplay').textContent = '';
-          document.getElementById('fileInput').value = '';
-          selectedFile = null;
-          carregarArquivos();
-        } else {
-          throw new Error(data.message || 'Erro no upload');
+      const reader = new FileReader();
+      
+      reader.onload = async function(e) {
+        try {
+          // Pega apenas a string do base64 (depois da vírgula)
+          const base64Data = e.target.result.split(',')[1];
+          
+          const payload = {
+            action: 'upload',
+            categoria: currentCategory,
+            titulo: titulo,
+            tipo: tipo,
+            fileName: selectedFile.name,
+            mimeType: selectedFile.type,
+            fileData: base64Data
+          };
+
+          // Faz o post como text/plain para ignorar preflight CORS
+          const response = await fetch(API_URL, {
+            method: 'POST',
+            body: JSON.stringify(payload)
+          });
+          
+          const data = await response.json();
+          
+          if (data.success) {
+            mostrarMensagem('adminMessage', 'Upload concluído! ✅', 'success');
+            document.getElementById('tituloInput').value = '';
+            document.getElementById('fileNameDisplay').textContent = '';
+            document.getElementById('fileInput').value = '';
+            selectedFile = null;
+            carregarArquivos();
+          } else {
+            throw new Error(data.message || 'Erro no upload do script');
+          }
+        } catch (error) {
+          mostrarMensagem('adminMessage', `Erro: ${error.message}`, 'error');
+        } finally {
+          uploadButton.disabled = false;
+          uploadButton.textContent = '✅ Adicionar Arquivo';
         }
-      } catch (error) {
-        mostrarMensagem('adminMessage', `Erro: ${error.message}`, 'error');
-      } finally {
+      };
+      
+      reader.onerror = function() {
+        mostrarMensagem('adminMessage', 'Erro ao ler arquivo local.', 'error');
         uploadButton.disabled = false;
         uploadButton.textContent = '✅ Adicionar Arquivo';
-      }
+      };
+      
+      reader.readAsDataURL(selectedFile);
     }
 
     async function carregarArquivos() {
@@ -677,20 +699,10 @@
       try {
         const response = await fetch(`${API_URL}?action=list&category=${encodeURIComponent(currentCategory)}`);
         
-        if (!response.ok) {
-          throw new Error(`HTTP error! status: ${response.status}`);
-        }
-        
-        const contentType = response.headers.get('content-type');
-        if (!contentType || !contentType.includes('application/json')) {
-          throw new Error('Resposta não é JSON. Verifique a URL da API.');
-        }
+        if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
         
         const data = await response.json();
-        
-        if (data.error) {
-          throw new Error(data.error);
-        }
+        if (data.error) throw new Error(data.error);
         
         const files = data.files || [];
         
@@ -701,11 +713,7 @@
 
         fileListDiv.innerHTML = '';
         
-        const iconMap = {
-          'imagem': '🖼️',
-          'video': '🎬',
-          'audio': '🎵'
-        };
+        const iconMap = { 'imagem': '🖼️', 'video': '🎬', 'audio': '🎵' };
         
         files.forEach(file => {
           const fileElement = document.createElement('div');
@@ -724,13 +732,10 @@
           fileListDiv.appendChild(fileElement);
         });
       } catch (error) {
-        console.error('Erro ao carregar arquivos:', error);
         fileListDiv.innerHTML = `
           <div style="text-align: center; color: #c0392b; padding: 20px;">
             <p>Erro ao carregar arquivos</p>
-            <p style="font-size: 0.9em;">${error.message}</p>
-            <button onclick="carregarArquivos()" 
-                    style="width: auto; margin-top: 10px; padding: 10px 20px;">
+            <button onclick="carregarArquivos()" style="width: auto; margin-top: 10px; padding: 10px 20px;">
               Tentar novamente
             </button>
           </div>`;
