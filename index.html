@@ -16,6 +16,7 @@
       background: linear-gradient(135deg, #2d5016 0%, #3d6b1e 30%, #7ab648 70%, #9acd32 100%);
       min-height: 100vh;
       color: #1a1a1a;
+      background-attachment: fixed;
     }
 
     .container {
@@ -87,6 +88,7 @@
       transition: all 0.3s ease;
       text-transform: uppercase;
       letter-spacing: 1px;
+      user-select: none;
     }
 
     .nav-tab:hover {
@@ -100,6 +102,7 @@
       color: #2d5016;
       border-color: white;
       box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+      transform: scale(1.05);
     }
 
     /* Content Grid */
@@ -118,6 +121,18 @@
       box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
       transition: all 0.3s ease;
       cursor: pointer;
+      animation: fadeIn 0.5s ease;
+    }
+
+    @keyframes fadeIn {
+      from {
+        opacity: 0;
+        transform: translateY(20px);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
     }
 
     .media-card:hover {
@@ -147,9 +162,20 @@
       color: white;
       font-size: 3em;
       display: flex;
+      flex-direction: column;
       align-items: center;
       justify-content: center;
       height: 200px;
+      gap: 15px;
+    }
+
+    .audio-icon {
+      font-size: 3em;
+    }
+
+    .audio-text {
+      font-size: 0.4em;
+      opacity: 0.8;
     }
 
     .media-info {
@@ -171,11 +197,15 @@
       border-radius: 20px;
       font-size: 0.9em;
       margin-bottom: 10px;
+      text-transform: capitalize;
     }
 
     .media-date {
       color: #666;
       font-size: 0.9em;
+      display: flex;
+      align-items: center;
+      gap: 5px;
     }
 
     /* Modal */
@@ -189,6 +219,12 @@
       background: rgba(0, 0, 0, 0.9);
       z-index: 1000;
       backdrop-filter: blur(10px);
+      animation: modalFadeIn 0.3s ease;
+    }
+
+    @keyframes modalFadeIn {
+      from { opacity: 0; }
+      to { opacity: 1; }
     }
 
     .modal-content {
@@ -201,6 +237,12 @@
       padding: 30px;
       max-height: 80vh;
       overflow-y: auto;
+      animation: modalSlideIn 0.3s ease;
+    }
+
+    @keyframes modalSlideIn {
+      from { transform: translateY(-50px); opacity: 0; }
+      to { transform: translateY(0); opacity: 1; }
     }
 
     .modal-close {
@@ -219,6 +261,7 @@
       display: flex;
       align-items: center;
       justify-content: center;
+      z-index: 10;
     }
 
     .modal-close:hover {
@@ -237,11 +280,18 @@
       width: 100%;
       max-height: 500px;
       object-fit: contain;
+      background: #f5f5f5;
     }
 
     .modal-media audio {
       width: 100%;
       margin: 20px 0;
+    }
+
+    .modal-title {
+      font-size: 2em;
+      color: #2d5016;
+      margin-bottom: 15px;
     }
 
     /* Footer Admin Icon */
@@ -274,9 +324,24 @@
 
     .loading {
       text-align: center;
-      padding: 40px;
+      padding: 60px 20px;
       color: white;
       font-size: 1.2em;
+    }
+
+    .loading-spinner {
+      display: inline-block;
+      width: 50px;
+      height: 50px;
+      border: 3px solid rgba(255, 255, 255, 0.3);
+      border-radius: 50%;
+      border-top-color: white;
+      animation: spin 1s ease-in-out infinite;
+      margin-bottom: 20px;
+    }
+
+    @keyframes spin {
+      to { transform: rotate(360deg); }
     }
 
     .empty-state {
@@ -285,6 +350,36 @@
       color: white;
       font-size: 1.3em;
       opacity: 0.8;
+      grid-column: 1 / -1;
+    }
+
+    .empty-icon {
+      font-size: 4em;
+      margin-bottom: 20px;
+    }
+
+    .error-state {
+      text-align: center;
+      padding: 40px 20px;
+      color: white;
+      background: rgba(231, 76, 60, 0.3);
+      border-radius: 15px;
+      grid-column: 1 / -1;
+    }
+
+    @media (max-width: 768px) {
+      .header h1 {
+        font-size: 2.5em;
+      }
+      
+      .content-grid {
+        grid-template-columns: 1fr;
+      }
+      
+      .nav-tab {
+        padding: 12px 20px;
+        font-size: 0.9em;
+      }
     }
   </style>
 </head>
@@ -307,19 +402,23 @@
 
     <!-- Content Area -->
     <div class="content-grid" id="contentGrid">
-      <div class="loading">Carregando conteúdo...</div>
+      <div class="loading">
+        <div class="loading-spinner"></div>
+        <p>Carregando conteúdo...</p>
+      </div>
     </div>
 
     <!-- Footer -->
     <footer class="footer">
-      <a href="ADMIN_URL_AQUI" class="admin-link" target="_blank">
+      <a href="https://script.google.com/macros/s/AKfycbwqdoWCfgflY5MzRWw0BfJJ-Cgg3XiWVpJlQfQA9OrHXD9lSyYjhIY7vbOxvwJdAzN3/exec" 
+         class="admin-link" target="_blank">
         🔐 Área Administrativa
       </a>
     </footer>
   </div>
 
   <!-- Modal -->
-  <div class="modal" id="mediaModal">
+  <div class="modal" id="mediaModal" onclick="closeModalOutside(event)">
     <div class="modal-content">
       <button class="modal-close" onclick="closeModal()">✕</button>
       <div id="modalContent"></div>
@@ -327,7 +426,7 @@
   </div>
 
   <script>
-    // Substitua pela URL do seu Web App do Google Apps Script
+    // URL do Web App do Google Apps Script
     const API_URL = 'https://script.google.com/macros/s/AKfycbwqdoWCfgflY5MzRWw0BfJJ-Cgg3XiWVpJlQfQA9OrHXD9lSyYjhIY7vbOxvwJdAzN3/exec';
     let currentCategory = 'Jingle';
     
@@ -349,19 +448,107 @@
       loadCategoryContent(category);
     }
 
-    function loadCategoryContent(category) {
+    async function loadCategoryContent(category) {
       const grid = document.getElementById('contentGrid');
-      grid.innerHTML = '<div class="loading">Carregando conteúdo...</div>';
+      grid.innerHTML = `
+        <div class="loading" style="grid-column: 1 / -1;">
+          <div class="loading-spinner"></div>
+          <p>Carregando ${category}...</p>
+        </div>
+      `;
       
-      // Como estamos usando Google Sheets, vamos fazer fetch dos dados
-      // Mas primeiro você precisa configurar o Google Sheets para servir como API
+      try {
+        // Fazer requisição para a API
+        const response = await fetch(`${API_URL}?action=list&category=${encodeURIComponent(category)}`);
+        const data = await response.json();
+        
+        if (data.error) {
+          throw new Error(data.error);
+        }
+        
+        if (!data.files || data.files.length === 0) {
+          grid.innerHTML = `
+            <div class="empty-state" style="grid-column: 1 / -1;">
+              <div class="empty-icon">📂</div>
+              <p>Nenhum arquivo encontrado em ${category}</p>
+              <p style="font-size: 0.8em; margin-top: 10px;">Adicione conteúdo através do painel administrativo</p>
+            </div>
+          `;
+          return;
+        }
+        
+        // Renderizar os arquivos
+        renderFiles(data.files);
+        
+      } catch (error) {
+        console.error('Erro ao carregar conteúdo:', error);
+        grid.innerHTML = `
+          <div class="error-state" style="grid-column: 1 / -1;">
+            <div class="empty-icon">⚠️</div>
+            <p>Erro ao carregar conteúdo</p>
+            <p style="font-size: 0.8em; margin-top: 10px;">${error.message}</p>
+            <button onclick="loadCategoryContent('${category}')" 
+                    style="margin-top: 20px; padding: 10px 20px; background: white; color: #2d5016; 
+                           border: none; border-radius: 20px; cursor: pointer; font-weight: 600;">
+              Tentar novamente
+            </button>
+          </div>
+        `;
+      }
+    }
+
+    function renderFiles(files) {
+      const grid = document.getElementById('contentGrid');
+      grid.innerHTML = '';
       
-      // Simulação de carregamento (substituir pela chamada real da API)
-      setTimeout(() => {
-        // Aqui você faria fetch(API_URL + '?action=list&category=' + category)
-        // Por enquanto, mostramos uma mensagem de exemplo
-        grid.innerHTML = '<div class="empty-state">Configure a URL da API do Google Sheets para carregar o conteúdo real</div>';
-      }, 1000);
+      files.forEach((file, index) => {
+        const card = document.createElement('div');
+        card.className = 'media-card';
+        card.style.animationDelay = `${index * 0.1}s`;
+        card.onclick = () => openMedia(file);
+        
+        let previewHTML = '';
+        
+        if (file.tipo === 'imagem') {
+          previewHTML = `
+            <div class="media-preview">
+              <img src="${file.url}" alt="${file.titulo}" 
+                   onerror="this.parentElement.innerHTML='<div class=\\'audio-preview\\'><span>🖼️</span><span class=\\'audio-text\\'>Imagem não disponível</span></div>'">
+            </div>
+          `;
+        } else if (file.tipo === 'video') {
+          previewHTML = `
+            <div class="media-preview">
+              <video muted>
+                <source src="${file.url}" type="video/mp4">
+                Seu navegador não suporta vídeos.
+              </video>
+              <div style="position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); 
+                          color: white; font-size: 3em; opacity: 0.8; pointer-events: none;">
+                ▶️
+              </div>
+            </div>
+          `;
+        } else if (file.tipo === 'audio') {
+          previewHTML = `
+            <div class="audio-preview">
+              <span class="audio-icon">🎵</span>
+              <span class="audio-text">Áudio</span>
+            </div>
+          `;
+        }
+        
+        card.innerHTML = `
+          ${previewHTML}
+          <div class="media-info">
+            <div class="media-title">${file.titulo || 'Sem título'}</div>
+            <span class="media-type">${file.tipo}</span>
+            <div class="media-date">📅 ${file.data || 'Data não disponível'}</div>
+          </div>
+        `;
+        
+        grid.appendChild(card);
+      });
     }
 
     function openMedia(mediaData) {
@@ -371,21 +558,62 @@
       let mediaHTML = '';
       
       if (mediaData.tipo === 'imagem') {
-        mediaHTML = `<div class="modal-media"><img src="${mediaData.url}" alt="${mediaData.titulo}"></div>`;
+        mediaHTML = `
+          <div class="modal-media">
+            <img src="${mediaData.url}" alt="${mediaData.titulo}" 
+                 onerror="this.src='data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 width=%22200%22 height=%22200%22><rect fill=%22%23ddd%22 width=%22200%22 height=%22200%22/><text fill=%22%23999%22 x=%2250%25%22 y=%2250%25%22 text-anchor=%22middle%22 dy=%22.3em%22>Imagem não disponível</text></svg>'">
+          </div>
+        `;
       } else if (mediaData.tipo === 'video') {
-        mediaHTML = `<div class="modal-media"><video controls><source src="${mediaData.url}" type="video/mp4"></video></div>`;
+        mediaHTML = `
+          <div class="modal-media">
+            <video controls autoplay>
+              <source src="${mediaData.url}" type="video/mp4">
+              Seu navegador não suporta o elemento de vídeo.
+            </video>
+          </div>
+        `;
       } else if (mediaData.tipo === 'audio') {
-        mediaHTML = `<div class="modal-media"><audio controls><source src="${mediaData.url}" type="audio/mpeg"></audio></div>`;
+        mediaHTML = `
+          <div class="modal-media">
+            <div style="background: linear-gradient(135deg, #2d5016, #4a7a2e); padding: 40px; 
+                        border-radius: 20px; text-align: center; color: white;">
+              <div style="font-size: 4em; margin-bottom: 20px;">🎵</div>
+              <audio controls style="width: 100%;">
+                <source src="${mediaData.url}" type="audio/mpeg">
+                Seu navegador não suporta o elemento de áudio.
+              </audio>
+            </div>
+          </div>
+        `;
       }
       
-      mediaHTML += `<h2>${mediaData.titulo}</h2>`;
+      modalContent.innerHTML = `
+        ${mediaHTML}
+        <h2 class="modal-title">${mediaData.titulo || 'Sem título'}</h2>
+        <p style="color: #666;">📅 ${mediaData.data || 'Data não disponível'}</p>
+      `;
       
-      modalContent.innerHTML = mediaHTML;
       modal.style.display = 'block';
+      document.body.style.overflow = 'hidden';
     }
 
     function closeModal() {
       document.getElementById('mediaModal').style.display = 'none';
+      document.body.style.overflow = 'auto';
+      
+      // Parar vídeos/áudio ao fechar modal
+      const modalContent = document.getElementById('modalContent');
+      const mediaElements = modalContent.querySelectorAll('video, audio');
+      mediaElements.forEach(element => {
+        element.pause();
+      });
+    }
+
+    function closeModalOutside(event) {
+      if (event.target === document.getElementById('mediaModal')) {
+        closeModal();
+      }
     }
 
     // Fechar modal com ESC
@@ -395,10 +623,25 @@
       }
     });
 
-    // Fechar modal clicando fora
-    document.getElementById('mediaModal').addEventListener('click', (e) => {
-      if (e.target === document.getElementById('mediaModal')) {
-        closeModal();
+    // Adicionar efeito hover nos cards de vídeo
+    document.addEventListener('mouseover', (e) => {
+      const videoCard = e.target.closest('.media-card');
+      if (videoCard) {
+        const video = videoCard.querySelector('video');
+        if (video && video.muted) {
+          video.play().catch(() => {});
+        }
+      }
+    });
+
+    document.addEventListener('mouseout', (e) => {
+      const videoCard = e.target.closest('.media-card');
+      if (videoCard) {
+        const video = videoCard.querySelector('video');
+        if (video) {
+          video.pause();
+          video.currentTime = 0;
+        }
       }
     });
   </script>
