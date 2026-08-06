@@ -74,9 +74,14 @@
       transition: transform 0.2s ease, box-shadow 0.2s ease;
     }
 
-    button:hover {
+    button:hover:not(:disabled) {
       transform: translateY(-2px);
       box-shadow: 0 10px 20px rgba(45, 80, 22, 0.3);
+    }
+
+    button:disabled {
+      opacity: 0.6;
+      cursor: not-allowed;
     }
 
     button.delete {
@@ -156,14 +161,6 @@
       border-color: #2d5016;
     }
 
-    .category-tab:hover {
-      background: rgba(45, 80, 22, 0.2);
-    }
-
-    .category-tab.active:hover {
-      background: linear-gradient(135deg, #2d5016, #4a7a2e);
-    }
-
     .message {
       padding: 12px;
       border-radius: 8px;
@@ -196,38 +193,69 @@
       margin-bottom: 30px;
     }
 
-    .add-form h2 {
-      color: #2d5016;
-      margin-bottom: 20px;
-    }
-
     .form-group {
-      margin-bottom: 15px;
+      margin-bottom: 20px;
     }
 
     .form-group label {
       display: block;
-      margin-bottom: 5px;
+      margin-bottom: 8px;
       color: #333;
       font-weight: 500;
     }
 
-    .help-text {
-      font-size: 0.9em;
-      color: #666;
-      margin-top: 5px;
+    .file-upload-area {
+      border: 2px dashed #4a7a2e;
+      border-radius: 12px;
+      padding: 40px;
+      text-align: center;
+      background: white;
+      cursor: pointer;
+      transition: all 0.3s ease;
     }
 
-    .url-examples {
+    .file-upload-area:hover {
+      background: #f0f7eb;
+      border-color: #2d5016;
+    }
+
+    .file-upload-area.dragover {
       background: #e8f5e9;
-      padding: 15px;
-      border-radius: 10px;
-      margin-top: 10px;
-      font-size: 0.9em;
+      border-color: #2d5016;
+      transform: scale(1.02);
     }
 
-    .url-examples strong {
+    .upload-icon {
+      font-size: 3em;
+      color: #4a7a2e;
+      margin-bottom: 10px;
+    }
+
+    .file-name {
+      margin-top: 10px;
       color: #2d5016;
+      font-weight: 500;
+    }
+
+    .progress-bar {
+      width: 100%;
+      height: 6px;
+      background: #e0e0e0;
+      border-radius: 3px;
+      margin-top: 10px;
+      overflow: hidden;
+      display: none;
+    }
+
+    .progress-bar.active {
+      display: block;
+    }
+
+    .progress-fill {
+      height: 100%;
+      background: linear-gradient(90deg, #2d5016, #7ab648);
+      width: 0%;
+      transition: width 0.3s ease;
     }
 
     .back-link {
@@ -241,6 +269,18 @@
 
     .back-link:hover {
       transform: translateX(-5px);
+    }
+
+    .supported-formats {
+      background: #e8f5e9;
+      padding: 15px;
+      border-radius: 10px;
+      margin-top: 15px;
+      font-size: 0.9em;
+    }
+
+    .supported-formats strong {
+      color: #2d5016;
     }
 
     @media (max-width: 768px) {
@@ -264,7 +304,7 @@
     <div class="admin-header">
       <a href="index.html" class="back-link">← Voltar ao Portfólio</a>
       <h1>🔐 Painel Administrativo</h1>
-      <p>Gerencie seu portfólio de forma simples e segura</p>
+      <p>Gerencie seu portfólio com upload direto de arquivos</p>
     </div>
 
     <!-- Login Section -->
@@ -292,7 +332,7 @@
         
         <div class="form-group">
           <label for="tipoInput">Tipo de Arquivo</label>
-          <select id="tipoInput">
+          <select id="tipoInput" onchange="updateFileAccept()">
             <option value="imagem">📷 Imagem</option>
             <option value="video">🎬 Vídeo</option>
             <option value="audio">🎵 Áudio</option>
@@ -300,19 +340,25 @@
         </div>
         
         <div class="form-group">
-          <label for="urlInput">URL do Arquivo</label>
-          <input type="text" id="urlInput" placeholder="https://exemplo.com/arquivo.jpg">
-          <div class="help-text">Cole o link direto do arquivo (Google Drive, Imgur, Dropbox, etc.)</div>
+          <label>Arquivo</label>
+          <div class="file-upload-area" id="fileUploadArea" onclick="document.getElementById('fileInput').click()">
+            <div class="upload-icon">📁</div>
+            <div>Clique para selecionar ou arraste o arquivo aqui</div>
+            <div class="file-name" id="fileNameDisplay"></div>
+            <div class="progress-bar" id="progressBar">
+              <div class="progress-fill" id="progressFill"></div>
+            </div>
+          </div>
+          <input type="file" id="fileInput" style="display: none;" onchange="handleFileSelect(event)">
+          <div class="supported-formats" id="supportedFormats">
+            <strong>Formatos suportados:</strong><br>
+            • Imagens: JPG, PNG, GIF, WebP<br>
+            • Vídeos: MP4, WebM<br>
+            • Áudio: MP3, WAV, OGG
+          </div>
         </div>
         
-        <div class="url-examples">
-          <strong>Exemplos de URLs válidas:</strong><br>
-          • Imagem: https://i.imgur.com/xxxxx.jpg<br>
-          • Vídeo: https://drive.google.com/uc?export=download&id=XXXXX<br>
-          • Áudio: https://www.soundcloud.com/xxxxx
-        </div>
-        
-        <button onclick="addFile()">✅ Adicionar Arquivo</button>
+        <button onclick="uploadFile()" id="uploadButton">✅ Fazer Upload</button>
         <button onclick="logout()" class="logout">🚪 Sair</button>
         
         <div id="adminMessage"></div>
@@ -329,23 +375,48 @@
     let currentCategory = 'Jingle';
     const categorias = ['Jingle', 'Placa Pirulito', 'Praginha'];
     let isLoggedIn = false;
+    let selectedFile = null;
     
     // Inicializar
     document.addEventListener('DOMContentLoaded', () => {
       criarTabsCategoria();
       
-      // Verificar se já está logado
       if (sessionStorage.getItem('adminLoggedIn') === 'true') {
         mostrarAdmin();
       }
       
-      // Permitir login com Enter
       document.getElementById('passwordInput').addEventListener('keypress', (e) => {
         if (e.key === 'Enter') {
           login();
         }
       });
+      
+      // Configurar drag and drop
+      setupDragAndDrop();
     });
+
+    function setupDragAndDrop() {
+      const uploadArea = document.getElementById('fileUploadArea');
+      
+      uploadArea.addEventListener('dragover', (e) => {
+        e.preventDefault();
+        uploadArea.classList.add('dragover');
+      });
+      
+      uploadArea.addEventListener('dragleave', () => {
+        uploadArea.classList.remove('dragover');
+      });
+      
+      uploadArea.addEventListener('drop', (e) => {
+        e.preventDefault();
+        uploadArea.classList.remove('dragover');
+        
+        const files = e.dataTransfer.files;
+        if (files.length > 0) {
+          handleFile(files[0]);
+        }
+      });
+    }
 
     function criarTabsCategoria() {
       const tabsContainer = document.getElementById('categoryTabs');
@@ -361,6 +432,67 @@
       if (isLoggedIn) {
         carregarArquivos();
       }
+    }
+
+    function updateFileAccept() {
+      const tipo = document.getElementById('tipoInput').value;
+      const fileInput = document.getElementById('fileInput');
+      
+      switch(tipo) {
+        case 'imagem':
+          fileInput.accept = 'image/*';
+          break;
+        case 'video':
+          fileInput.accept = 'video/*';
+          break;
+        case 'audio':
+          fileInput.accept = 'audio/*';
+          break;
+      }
+    }
+
+    function handleFileSelect(event) {
+      const file = event.target.files[0];
+      if (file) {
+        handleFile(file);
+      }
+    }
+
+    function handleFile(file) {
+      const tipo = document.getElementById('tipoInput').value;
+      let validTypes = [];
+      
+      switch(tipo) {
+        case 'imagem':
+          validTypes = ['image/jpeg', 'image/png', 'image/gif', 'image/webp'];
+          break;
+        case 'video':
+          validTypes = ['video/mp4', 'video/webm'];
+          break;
+        case 'audio':
+          validTypes = ['audio/mpeg', 'audio/wav', 'audio/ogg', 'audio/mp3'];
+          break;
+      }
+      
+      if (!validTypes.includes(file.type)) {
+        mostrarMensagem('adminMessage', `Tipo de arquivo não suportado para ${tipo}!`, 'error');
+        return;
+      }
+      
+      // Verificar tamanho (máximo 25MB)
+      if (file.size > 25 * 1024 * 1024) {
+        mostrarMensagem('adminMessage', 'Arquivo muito grande! Máximo permitido: 25MB', 'error');
+        return;
+      }
+      
+      selectedFile = file;
+      document.getElementById('fileNameDisplay').textContent = `📎 ${file.name} (${formatFileSize(file.size)})`;
+    }
+
+    function formatFileSize(bytes) {
+      if (bytes < 1024) return bytes + ' B';
+      if (bytes < 1048576) return (bytes / 1024).toFixed(1) + ' KB';
+      return (bytes / 1048576).toFixed(1) + ' MB';
     }
 
     async function login() {
@@ -391,6 +523,7 @@
       document.getElementById('loginSection').classList.remove('active');
       document.getElementById('adminSection').classList.add('active');
       carregarArquivos();
+      updateFileAccept();
     }
 
     function logout() {
@@ -401,35 +534,77 @@
       document.getElementById('passwordInput').value = '';
     }
 
-    async function addFile() {
+    async function uploadFile() {
       const titulo = document.getElementById('tituloInput').value;
       const tipo = document.getElementById('tipoInput').value;
-      const url = document.getElementById('urlInput').value;
-
-      if (!titulo || !url) {
-        mostrarMensagem('adminMessage', 'Preencha todos os campos!', 'error');
+      
+      if (!titulo) {
+        mostrarMensagem('adminMessage', 'Por favor, insira um título!', 'error');
         return;
       }
-
-      if (!isValidUrl(url)) {
-        mostrarMensagem('adminMessage', 'URL inválida! Por favor, insira uma URL válida.', 'error');
+      
+      if (!selectedFile) {
+        mostrarMensagem('adminMessage', 'Por favor, selecione um arquivo!', 'error');
         return;
       }
-
+      
+      const uploadButton = document.getElementById('uploadButton');
+      const progressBar = document.getElementById('progressBar');
+      const progressFill = document.getElementById('progressFill');
+      
+      uploadButton.disabled = true;
+      uploadButton.textContent = '⏳ Enviando...';
+      progressBar.classList.add('active');
+      
+      // Simular progresso
+      let progress = 0;
+      const progressInterval = setInterval(() => {
+        progress += Math.random() * 30;
+        if (progress > 90) progress = 90;
+        progressFill.style.width = progress + '%';
+      }, 500);
+      
       try {
-        const response = await fetch(`${getApiUrl()}?action=add&category=${encodeURIComponent(currentCategory)}&titulo=${encodeURIComponent(titulo)}&tipo=${encodeURIComponent(tipo)}&url=${encodeURIComponent(url)}`);
+        const formData = new FormData();
+        formData.append('action', 'upload');
+        formData.append('categoria', currentCategory);
+        formData.append('titulo', titulo);
+        formData.append('tipo', tipo);
+        formData.append('file', selectedFile);
+        
+        const response = await fetch(getApiUrl(), {
+          method: 'POST',
+          body: formData
+        });
+        
         const data = await response.json();
         
+        clearInterval(progressInterval);
+        
         if (data.success) {
-          mostrarMensagem('adminMessage', 'Arquivo adicionado com sucesso! ✅', 'success');
+          progressFill.style.width = '100%';
+          setTimeout(() => {
+            progressBar.classList.remove('active');
+            progressFill.style.width = '0%';
+          }, 1000);
+          
+          mostrarMensagem('adminMessage', 'Arquivo enviado com sucesso! ✅', 'success');
           document.getElementById('tituloInput').value = '';
-          document.getElementById('urlInput').value = '';
+          document.getElementById('fileNameDisplay').textContent = '';
+          document.getElementById('fileInput').value = '';
+          selectedFile = null;
           carregarArquivos();
         } else {
-          mostrarMensagem('adminMessage', data.message || 'Erro ao adicionar arquivo', 'error');
+          throw new Error(data.message || 'Erro ao enviar arquivo');
         }
       } catch (error) {
-        mostrarMensagem('adminMessage', 'Erro ao adicionar arquivo. Verifique sua conexão.', 'error');
+        clearInterval(progressInterval);
+        progressBar.classList.remove('active');
+        progressFill.style.width = '0%';
+        mostrarMensagem('adminMessage', `Erro: ${error.message}`, 'error');
+      } finally {
+        uploadButton.disabled = false;
+        uploadButton.textContent = '✅ Fazer Upload';
       }
     }
 
@@ -457,15 +632,20 @@
         files.forEach(file => {
           const fileElement = document.createElement('div');
           fileElement.className = 'file-item';
+          
+          const iconMap = {
+            'imagem': '🖼️',
+            'video': '🎬',
+            'audio': '🎵'
+          };
+          
           fileElement.innerHTML = `
             <div class="file-info">
-              <strong>${file.titulo || 'Sem título'}</strong><br>
+              <strong>${iconMap[file.tipo] || '📁'} ${file.titulo || 'Sem título'}</strong><br>
               <small>Tipo: ${file.tipo} | Data: ${file.data || 'N/A'}</small>
-              <br>
-              <small style="color: #666; word-break: break-all;">URL: ${file.url}</small>
             </div>
             <div class="file-actions">
-              <button onclick="window.open('${file.url}', '_blank')">🔗 Abrir</button>
+              <button onclick="window.open('${file.url}', '_blank')">🔗 Ver</button>
               <button class="delete" onclick="deletarArquivo('${file.id}')">🗑️ Deletar</button>
             </div>
           `;
@@ -503,17 +683,7 @@
       }, 5000);
     }
 
-    function isValidUrl(string) {
-      try {
-        new URL(string);
-        return true;
-      } catch (_) {
-        return false;
-      }
-    }
-
     function getApiUrl() {
-      // URL do Web App do Google Apps Script
       return 'https://script.google.com/macros/s/AKfycbwqdoWCfgflY5MzRWw0BfJJ-Cgg3XiWVpJlQfQA9OrHXD9lSyYjhIY7vbOxvwJdAzN3/exec';
     }
   </script>
