@@ -4,6 +4,7 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Portfólio - Design Apple Verde Militar</title>
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🎨</text></svg>">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
   <style>
     * {
@@ -26,7 +27,6 @@
       padding: 20px;
     }
 
-    /* Header */
     .header {
       text-align: center;
       padding: 80px 20px 60px;
@@ -67,7 +67,6 @@
       margin: 0 auto;
     }
 
-    /* Navigation Tabs */
     .nav-tabs {
       display: flex;
       justify-content: center;
@@ -106,7 +105,6 @@
       transform: scale(1.05);
     }
 
-    /* Content Grid */
     .content-grid {
       display: grid;
       grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
@@ -126,14 +124,8 @@
     }
 
     @keyframes fadeIn {
-      from {
-        opacity: 0;
-        transform: translateY(20px);
-      }
-      to {
-        opacity: 1;
-        transform: translateY(0);
-      }
+      from { opacity: 0; transform: translateY(20px); }
+      to { opacity: 1; transform: translateY(0); }
     }
 
     .media-card:hover {
@@ -158,7 +150,6 @@
       object-fit: cover;
     }
 
-    /* Spotify-like Audio Player */
     .spotify-player {
       background: linear-gradient(135deg, #1a1a1a 0%, #2d2d2d 100%);
       color: white;
@@ -198,21 +189,20 @@
       align-items: center;
       justify-content: center;
       font-size: 2.5em;
-      animation: rotate 20s linear infinite;
       box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+    }
+
+    .spotify-art.playing {
+      animation: rotate 20s linear infinite;
+    }
+
+    .spotify-art.paused {
+      animation-play-state: paused;
     }
 
     @keyframes rotate {
       from { transform: rotate(0deg); }
       to { transform: rotate(360deg); }
-    }
-
-    .spotify-art.playing {
-      animation-play-state: running;
-    }
-
-    .spotify-art.paused {
-      animation-play-state: paused;
     }
 
     .spotify-info {
@@ -295,7 +285,6 @@
       margin-top: 5px;
     }
 
-    /* Media Info */
     .media-info {
       padding: 25px;
     }
@@ -321,12 +310,8 @@
     .media-date {
       color: #666;
       font-size: 0.9em;
-      display: flex;
-      align-items: center;
-      gap: 5px;
     }
 
-    /* Modal */
     .modal {
       display: none;
       position: fixed;
@@ -337,12 +322,6 @@
       background: rgba(0, 0, 0, 0.9);
       z-index: 1000;
       backdrop-filter: blur(10px);
-      animation: modalFadeIn 0.3s ease;
-    }
-
-    @keyframes modalFadeIn {
-      from { opacity: 0; }
-      to { opacity: 1; }
     }
 
     .modal-content {
@@ -355,12 +334,6 @@
       padding: 30px;
       max-height: 80vh;
       overflow-y: auto;
-      animation: modalSlideIn 0.3s ease;
-    }
-
-    @keyframes modalSlideIn {
-      from { transform: translateY(-50px); opacity: 0; }
-      to { transform: translateY(0); opacity: 1; }
     }
 
     .modal-close {
@@ -401,7 +374,6 @@
       background: #f5f5f5;
     }
 
-    /* Modal Spotify Player */
     .modal-spotify {
       background: linear-gradient(135deg, #1a1a1a, #2d2d2d);
       border-radius: 20px;
@@ -506,7 +478,6 @@
       margin-bottom: 15px;
     }
 
-    /* Footer */
     .footer {
       text-align: center;
       padding: 40px 20px;
@@ -576,24 +547,14 @@
     }
 
     @media (max-width: 768px) {
-      .header h1 {
-        font-size: 2.5em;
-      }
-      
-      .content-grid {
-        grid-template-columns: 1fr;
-      }
-      
-      .nav-tab {
-        padding: 12px 20px;
-        font-size: 0.9em;
-      }
+      .header h1 { font-size: 2.5em; }
+      .content-grid { grid-template-columns: 1fr; }
+      .nav-tab { padding: 12px 20px; font-size: 0.9em; }
     }
   </style>
 </head>
 <body>
   <div class="container">
-    <!-- Header -->
     <header class="header">
       <div class="header-content">
         <h1>Meu Portfólio</h1>
@@ -601,14 +562,8 @@
       </div>
     </header>
 
-    <!-- Navigation -->
-    <nav class="nav-tabs" id="navTabs">
-      <div class="nav-tab active" onclick="changeCategory('Jingle', this)">🎵 Jingle</div>
-      <div class="nav-tab" onclick="changeCategory('Placa Pirulito', this)">🏗️ Placa Pirulito</div>
-      <div class="nav-tab" onclick="changeCategory('Praginha', this)">🌳 Praginha</div>
-    </nav>
+    <nav class="nav-tabs" id="navTabs"></nav>
 
-    <!-- Content Area -->
     <div class="content-grid" id="contentGrid">
       <div class="loading">
         <div class="loading-spinner"></div>
@@ -616,16 +571,12 @@
       </div>
     </div>
 
-    <!-- Footer -->
     <footer class="footer">
-      <a href="admin.html" class="admin-link">
-        🔐 Área Administrativa
-      </a>
+      <a href="admin.html" class="admin-link">🔐 Área Administrativa</a>
     </footer>
   </div>
 
-  <!-- Modal -->
-  <div class="modal" id="mediaModal" onclick="closeModalOutside(event)">
+  <div class="modal" id="mediaModal">
     <div class="modal-content">
       <button class="modal-close" onclick="closeModal()">✕</button>
       <div id="modalContent"></div>
@@ -634,12 +585,47 @@
 
   <script>
     const API_URL = 'https://script.google.com/macros/s/AKfycbwqdoWCfgflY5MzRWw0BfJJ-Cgg3XiWVpJlQfQA9OrHXD9lSyYjhIY7vbOxvwJdAzN3/exec';
-    let currentCategory = 'Jingle';
+    let currentCategory = '';
+    let categories = [];
     let currentAudio = null;
     
     document.addEventListener('DOMContentLoaded', () => {
-      loadCategoryContent(currentCategory);
+      loadCategories();
     });
+
+    async function loadCategories() {
+      try {
+        const response = await fetch(`${API_URL}?action=getCategories`);
+        const data = await response.json();
+        
+        if (data.categories && data.categories.length > 0) {
+          categories = data.categories;
+          currentCategory = categories[0];
+          renderNavTabs();
+          loadCategoryContent(currentCategory);
+        } else {
+          // Fallback para categorias padrão
+          categories = ['Jingle', 'Placa Pirulito', 'Praginha'];
+          currentCategory = categories[0];
+          renderNavTabs();
+          loadCategoryContent(currentCategory);
+        }
+      } catch (error) {
+        console.error('Erro ao carregar categorias:', error);
+        categories = ['Jingle', 'Placa Pirulito', 'Praginha'];
+        currentCategory = categories[0];
+        renderNavTabs();
+        loadCategoryContent(currentCategory);
+      }
+    }
+
+    function renderNavTabs() {
+      const navTabs = document.getElementById('navTabs');
+      navTabs.innerHTML = categories.map(cat => 
+        `<div class="nav-tab ${cat === currentCategory ? 'active' : ''}" 
+             onclick="changeCategory('${cat}', this)">${cat}</div>`
+      ).join('');
+    }
 
     function changeCategory(category, element) {
       currentCategory = category;
@@ -649,9 +635,7 @@
         currentAudio = null;
       }
       
-      document.querySelectorAll('.nav-tab').forEach(tab => {
-        tab.classList.remove('active');
-      });
+      document.querySelectorAll('.nav-tab').forEach(tab => tab.classList.remove('active'));
       element.classList.add('active');
       
       loadCategoryContent(category);
@@ -668,6 +652,11 @@
       
       try {
         const response = await fetch(`${API_URL}?action=list&category=${encodeURIComponent(category)}`);
+        
+        if (!response.ok) {
+          throw new Error(`HTTP error! status: ${response.status}`);
+        }
+        
         const data = await response.json();
         
         if (data.error) throw new Error(data.error);
@@ -676,7 +665,7 @@
           grid.innerHTML = `
             <div class="empty-state">
               <div style="font-size: 4em; margin-bottom: 20px;">📂</div>
-              <p>Nenhum arquivo encontrado em ${category}</p>
+              <p>Nenhum arquivo em ${category}</p>
             </div>
           `;
           return;
@@ -685,10 +674,11 @@
         renderFiles(data.files);
         
       } catch (error) {
+        console.error('Erro:', error);
         grid.innerHTML = `
           <div class="error-state">
-            <div style="font-size: 3em; margin-bottom: 20px;">⚠️</div>
             <p>Erro ao carregar conteúdo</p>
+            <p style="font-size: 0.9em;">${error.message}</p>
             <button onclick="loadCategoryContent('${category}')" 
                     style="margin-top: 20px; padding: 10px 20px; background: white; color: #2d5016; 
                            border: none; border-radius: 20px; cursor: pointer; font-weight: 600;">
@@ -724,18 +714,14 @@
                 <source src="${file.url}" type="video/mp4">
               </video>
               <div style="position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); 
-                          color: white; font-size: 3em; opacity: 0.8; pointer-events: none;">
-                ▶️
-              </div>
+                          color: white; font-size: 3em; opacity: 0.8; pointer-events: none;">▶️</div>
             </div>
           `;
         } else if (file.tipo === 'audio') {
           previewHTML = `
             <div class="spotify-player" onclick="event.stopPropagation();">
               <div class="spotify-content">
-                <div class="spotify-art paused" id="art_${file.id}">
-                  🎵
-                </div>
+                <div class="spotify-art paused" id="art_${file.id}">🎵</div>
                 <div class="spotify-info">
                   <div class="spotify-title">${file.titulo || 'Áudio'}</div>
                 </div>
@@ -765,7 +751,7 @@
         
         card.innerHTML = `
           ${previewHTML}
-          <div class="media-info" onclick="openMedia('${file.id}')">
+          <div class="media-info">
             <div class="media-title">${file.titulo || 'Sem título'}</div>
             <span class="media-type">${file.tipo}</span>
             <div class="media-date">📅 ${file.data || 'Data não disponível'}</div>
@@ -774,14 +760,13 @@
         
         grid.appendChild(card);
         
-        // Configurar eventos de áudio
         if (file.tipo === 'audio') {
-          setupAudioPlayer(file.id, file.url);
+          setupAudioPlayer(file.id);
         }
       });
     }
 
-    function setupAudioPlayer(id, url) {
+    function setupAudioPlayer(id) {
       const audio = document.getElementById(`audio_${id}`);
       if (!audio) return;
       
@@ -791,8 +776,10 @@
       
       audio.addEventListener('timeupdate', () => {
         const progress = (audio.currentTime / audio.duration) * 100;
-        document.getElementById(`progress_${id}`).style.width = progress + '%';
-        document.getElementById(`currentTime_${id}`).textContent = formatTime(audio.currentTime);
+        const progressBar = document.getElementById(`progress_${id}`);
+        const currentTime = document.getElementById(`currentTime_${id}`);
+        if (progressBar) progressBar.style.width = progress + '%';
+        if (currentTime) currentTime.textContent = formatTime(audio.currentTime);
       });
       
       audio.addEventListener('ended', () => {
@@ -811,11 +798,14 @@
       if (!audio) return;
       
       if (currentAudio && currentAudio !== audio) {
-        // Pausar áudio anterior
         const prevId = currentAudio.id.replace('audio_', '');
-        document.getElementById(`playBtn_${prevId}`).innerHTML = '<i class="fas fa-play"></i>';
-        document.getElementById(`art_${prevId}`).classList.remove('playing');
-        document.getElementById(`art_${prevId}`).classList.add('paused');
+        const prevBtn = document.getElementById(`playBtn_${prevId}`);
+        const prevArt = document.getElementById(`art_${prevId}`);
+        if (prevBtn) prevBtn.innerHTML = '<i class="fas fa-play"></i>';
+        if (prevArt) {
+          prevArt.classList.remove('playing');
+          prevArt.classList.add('paused');
+        }
         currentAudio.pause();
       }
       
@@ -859,85 +849,13 @@
       return `${mins}:${secs.toString().padStart(2, '0')}`;
     }
 
-    function openMedia(id) {
-      // Encontrar o arquivo correspondente
-      const audio = document.getElementById(`audio_${id}`);
-      if (audio) {
-        // Para áudio, abrir modal com player Spotify-like
-        const modal = document.getElementById('mediaModal');
-        const modalContent = document.getElementById('modalContent');
-        
-        modalContent.innerHTML = `
-          <div class="modal-spotify">
-            <div class="modal-spotify-art">🎵</div>
-            <h2 style="color: white; margin-bottom: 10px;">${audio.parentElement.querySelector('.spotify-title').textContent}</h2>
-            <div class="modal-spotify-controls">
-              <button class="modal-spotify-btn" onclick="skipAudio('${id}', -10)">
-                <i class="fas fa-backward"></i>
-              </button>
-              <button class="modal-spotify-btn play-btn" id="modalPlayBtn_${id}" onclick="toggleAudio('${id}')">
-                <i class="fas fa-play"></i>
-              </button>
-              <button class="modal-spotify-btn" onclick="skipAudio('${id}', 10)">
-                <i class="fas fa-forward"></i>
-              </button>
-            </div>
-            <div class="modal-spotify-progress" onclick="seekAudio(event, '${id}')">
-              <div class="modal-spotify-progress-bar" id="modalProgress_${id}"></div>
-            </div>
-            <div class="modal-spotify-time">
-              <span id="modalCurrentTime_${id}">0:00</span>
-              <span id="modalDuration_${id}">0:00</span>
-            </div>
-          </div>
-        `;
-        
-        modal.style.display = 'block';
-        document.body.style.overflow = 'hidden';
-        
-        // Sincronizar com o player original
-        setupModalAudioSync(id);
-      }
-    }
-
-    function setupModalAudioSync(id) {
-      const audio = document.getElementById(`audio_${id}`);
-      if (!audio) return;
-      
-      audio.addEventListener('timeupdate', () => {
-        const progress = (audio.currentTime / audio.duration) * 100;
-        const modalProgress = document.getElementById(`modalProgress_${id}`);
-        const modalCurrentTime = document.getElementById(`modalCurrentTime_${id}`);
-        const modalDuration = document.getElementById(`modalDuration_${id}`);
-        const modalPlayBtn = document.getElementById(`modalPlayBtn_${id}`);
-        
-        if (modalProgress) modalProgress.style.width = progress + '%';
-        if (modalCurrentTime) modalCurrentTime.textContent = formatTime(audio.currentTime);
-        if (modalDuration) modalDuration.textContent = formatTime(audio.duration);
-        
-        if (modalPlayBtn) {
-          modalPlayBtn.innerHTML = audio.paused ? 
-            '<i class="fas fa-play"></i>' : 
-            '<i class="fas fa-pause"></i>';
-        }
-      });
-    }
-
     function closeModal() {
       document.getElementById('mediaModal').style.display = 'none';
       document.body.style.overflow = 'auto';
     }
 
-    function closeModalOutside(event) {
-      if (event.target === document.getElementById('mediaModal')) {
-        closeModal();
-      }
-    }
-
     document.addEventListener('keydown', (e) => {
-      if (e.key === 'Escape') {
-        closeModal();
-      }
+      if (e.key === 'Escape') closeModal();
     });
   </script>
 </body>
