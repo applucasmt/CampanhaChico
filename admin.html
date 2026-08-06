@@ -1,0 +1,521 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Painel Administrativo - Portfólio</title>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, sans-serif;
+    }
+
+    body {
+      background: linear-gradient(135deg, #2d5016 0%, #4a7a2e 50%, #7ab648 100%);
+      min-height: 100vh;
+      padding: 20px;
+      background-attachment: fixed;
+    }
+
+    .admin-container {
+      max-width: 1200px;
+      margin: 0 auto;
+      background: rgba(255, 255, 255, 0.95);
+      border-radius: 20px;
+      backdrop-filter: blur(10px);
+      box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+      padding: 40px;
+    }
+
+    .admin-header {
+      text-align: center;
+      margin-bottom: 40px;
+      color: #2d5016;
+    }
+
+    .admin-header h1 {
+      font-size: 2.5em;
+      font-weight: 600;
+      margin-bottom: 10px;
+    }
+
+    .login-section, .admin-section {
+      display: none;
+    }
+
+    .login-section.active, .admin-section.active {
+      display: block;
+    }
+
+    input, select, button {
+      width: 100%;
+      padding: 12px 16px;
+      margin: 10px 0;
+      border: 2px solid #e0e0e0;
+      border-radius: 12px;
+      font-size: 16px;
+      transition: all 0.3s ease;
+    }
+
+    input:focus, select:focus {
+      outline: none;
+      border-color: #4a7a2e;
+      box-shadow: 0 0 0 3px rgba(74, 122, 46, 0.1);
+    }
+
+    button {
+      background: linear-gradient(135deg, #2d5016, #4a7a2e);
+      color: white;
+      border: none;
+      font-weight: 600;
+      cursor: pointer;
+      transition: transform 0.2s ease, box-shadow 0.2s ease;
+    }
+
+    button:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 10px 20px rgba(45, 80, 22, 0.3);
+    }
+
+    button.delete {
+      background: linear-gradient(135deg, #c0392b, #e74c3c);
+    }
+
+    button.logout {
+      background: #666;
+    }
+
+    .file-list {
+      margin-top: 30px;
+    }
+
+    .file-item {
+      background: white;
+      border: 1px solid #e0e0e0;
+      border-radius: 12px;
+      padding: 20px;
+      margin: 10px 0;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      transition: all 0.3s ease;
+      animation: fadeIn 0.3s ease;
+    }
+
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(10px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    .file-item:hover {
+      box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+      transform: translateX(5px);
+    }
+
+    .file-info {
+      flex: 1;
+    }
+
+    .file-actions {
+      display: flex;
+      gap: 10px;
+      flex-wrap: wrap;
+    }
+
+    .file-actions button {
+      width: auto;
+      padding: 8px 16px;
+      margin: 0;
+    }
+
+    .category-tabs {
+      display: flex;
+      gap: 10px;
+      margin-bottom: 30px;
+      overflow-x: auto;
+      flex-wrap: wrap;
+    }
+
+    .category-tab {
+      background: rgba(45, 80, 22, 0.1);
+      color: #2d5016;
+      border: 2px solid transparent;
+      padding: 12px 24px;
+      border-radius: 25px;
+      cursor: pointer;
+      white-space: nowrap;
+      transition: all 0.3s ease;
+      user-select: none;
+    }
+
+    .category-tab.active {
+      background: linear-gradient(135deg, #2d5016, #4a7a2e);
+      color: white;
+      border-color: #2d5016;
+    }
+
+    .category-tab:hover {
+      background: rgba(45, 80, 22, 0.2);
+    }
+
+    .category-tab.active:hover {
+      background: linear-gradient(135deg, #2d5016, #4a7a2e);
+    }
+
+    .message {
+      padding: 12px;
+      border-radius: 8px;
+      margin: 10px 0;
+      text-align: center;
+      animation: slideDown 0.3s ease;
+    }
+
+    @keyframes slideDown {
+      from { opacity: 0; transform: translateY(-10px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    .message.success {
+      background: #d4edda;
+      color: #155724;
+      border: 1px solid #c3e6cb;
+    }
+
+    .message.error {
+      background: #f8d7da;
+      color: #721c24;
+      border: 1px solid #f5c6cb;
+    }
+
+    .add-form {
+      background: #f9f9f9;
+      padding: 30px;
+      border-radius: 15px;
+      margin-bottom: 30px;
+    }
+
+    .add-form h2 {
+      color: #2d5016;
+      margin-bottom: 20px;
+    }
+
+    .form-group {
+      margin-bottom: 15px;
+    }
+
+    .form-group label {
+      display: block;
+      margin-bottom: 5px;
+      color: #333;
+      font-weight: 500;
+    }
+
+    .help-text {
+      font-size: 0.9em;
+      color: #666;
+      margin-top: 5px;
+    }
+
+    .url-examples {
+      background: #e8f5e9;
+      padding: 15px;
+      border-radius: 10px;
+      margin-top: 10px;
+      font-size: 0.9em;
+    }
+
+    .url-examples strong {
+      color: #2d5016;
+    }
+
+    .back-link {
+      display: inline-block;
+      margin-bottom: 20px;
+      color: #2d5016;
+      text-decoration: none;
+      font-weight: 600;
+      transition: all 0.3s ease;
+    }
+
+    .back-link:hover {
+      transform: translateX(-5px);
+    }
+
+    @media (max-width: 768px) {
+      .admin-container {
+        padding: 20px;
+      }
+      
+      .file-item {
+        flex-direction: column;
+        gap: 15px;
+      }
+      
+      .file-actions {
+        width: 100%;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="admin-container">
+    <div class="admin-header">
+      <a href="index.html" class="back-link">← Voltar ao Portfólio</a>
+      <h1>🔐 Painel Administrativo</h1>
+      <p>Gerencie seu portfólio de forma simples e segura</p>
+    </div>
+
+    <!-- Login Section -->
+    <div id="loginSection" class="login-section active">
+      <h2 style="color: #2d5016; margin-bottom: 20px;">Login</h2>
+      <div class="form-group">
+        <label for="passwordInput">Senha de Administrador</label>
+        <input type="password" id="passwordInput" placeholder="Digite a senha de administrador">
+      </div>
+      <button onclick="login()">Entrar</button>
+      <div id="loginMessage"></div>
+    </div>
+
+    <!-- Admin Section -->
+    <div id="adminSection" class="admin-section">
+      <div class="add-form">
+        <h2>Adicionar Novo Arquivo</h2>
+        
+        <div class="category-tabs" id="categoryTabs"></div>
+        
+        <div class="form-group">
+          <label for="tituloInput">Título do Arquivo</label>
+          <input type="text" id="tituloInput" placeholder="Ex: Jingle Comercial 1">
+        </div>
+        
+        <div class="form-group">
+          <label for="tipoInput">Tipo de Arquivo</label>
+          <select id="tipoInput">
+            <option value="imagem">📷 Imagem</option>
+            <option value="video">🎬 Vídeo</option>
+            <option value="audio">🎵 Áudio</option>
+          </select>
+        </div>
+        
+        <div class="form-group">
+          <label for="urlInput">URL do Arquivo</label>
+          <input type="text" id="urlInput" placeholder="https://exemplo.com/arquivo.jpg">
+          <div class="help-text">Cole o link direto do arquivo (Google Drive, Imgur, Dropbox, etc.)</div>
+        </div>
+        
+        <div class="url-examples">
+          <strong>Exemplos de URLs válidas:</strong><br>
+          • Imagem: https://i.imgur.com/xxxxx.jpg<br>
+          • Vídeo: https://drive.google.com/uc?export=download&id=XXXXX<br>
+          • Áudio: https://www.soundcloud.com/xxxxx
+        </div>
+        
+        <button onclick="addFile()">✅ Adicionar Arquivo</button>
+        <button onclick="logout()" class="logout">🚪 Sair</button>
+        
+        <div id="adminMessage"></div>
+      </div>
+      
+      <div class="file-list">
+        <h3 style="color: #2d5016; margin-bottom: 20px;">📁 Arquivos da Categoria</h3>
+        <div id="fileList"></div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    let currentCategory = 'Jingle';
+    const categorias = ['Jingle', 'Placa Pirulito', 'Praginha'];
+    let isLoggedIn = false;
+    
+    // Inicializar
+    document.addEventListener('DOMContentLoaded', () => {
+      criarTabsCategoria();
+      
+      // Verificar se já está logado
+      if (sessionStorage.getItem('adminLoggedIn') === 'true') {
+        mostrarAdmin();
+      }
+      
+      // Permitir login com Enter
+      document.getElementById('passwordInput').addEventListener('keypress', (e) => {
+        if (e.key === 'Enter') {
+          login();
+        }
+      });
+    });
+
+    function criarTabsCategoria() {
+      const tabsContainer = document.getElementById('categoryTabs');
+      tabsContainer.innerHTML = categorias.map(cat => 
+        `<div class="category-tab ${cat === currentCategory ? 'active' : ''}" 
+             onclick="mudarCategoria('${cat}')">${cat}</div>`
+      ).join('');
+    }
+
+    function mudarCategoria(categoria) {
+      currentCategory = categoria;
+      criarTabsCategoria();
+      if (isLoggedIn) {
+        carregarArquivos();
+      }
+    }
+
+    async function login() {
+      const password = document.getElementById('passwordInput').value;
+      
+      if (!password) {
+        mostrarMensagem('loginMessage', 'Por favor, digite a senha!', 'error');
+        return;
+      }
+      
+      try {
+        const response = await fetch(`${getApiUrl()}?action=checkPassword&password=${encodeURIComponent(password)}`);
+        const data = await response.json();
+        
+        if (data.valid) {
+          isLoggedIn = true;
+          sessionStorage.setItem('adminLoggedIn', 'true');
+          mostrarAdmin();
+        } else {
+          mostrarMensagem('loginMessage', 'Senha incorreta!', 'error');
+        }
+      } catch (error) {
+        mostrarMensagem('loginMessage', 'Erro ao verificar senha. Tente novamente.', 'error');
+      }
+    }
+
+    function mostrarAdmin() {
+      document.getElementById('loginSection').classList.remove('active');
+      document.getElementById('adminSection').classList.add('active');
+      carregarArquivos();
+    }
+
+    function logout() {
+      isLoggedIn = false;
+      sessionStorage.removeItem('adminLoggedIn');
+      document.getElementById('adminSection').classList.remove('active');
+      document.getElementById('loginSection').classList.add('active');
+      document.getElementById('passwordInput').value = '';
+    }
+
+    async function addFile() {
+      const titulo = document.getElementById('tituloInput').value;
+      const tipo = document.getElementById('tipoInput').value;
+      const url = document.getElementById('urlInput').value;
+
+      if (!titulo || !url) {
+        mostrarMensagem('adminMessage', 'Preencha todos os campos!', 'error');
+        return;
+      }
+
+      if (!isValidUrl(url)) {
+        mostrarMensagem('adminMessage', 'URL inválida! Por favor, insira uma URL válida.', 'error');
+        return;
+      }
+
+      try {
+        const response = await fetch(`${getApiUrl()}?action=add&category=${encodeURIComponent(currentCategory)}&titulo=${encodeURIComponent(titulo)}&tipo=${encodeURIComponent(tipo)}&url=${encodeURIComponent(url)}`);
+        const data = await response.json();
+        
+        if (data.success) {
+          mostrarMensagem('adminMessage', 'Arquivo adicionado com sucesso! ✅', 'success');
+          document.getElementById('tituloInput').value = '';
+          document.getElementById('urlInput').value = '';
+          carregarArquivos();
+        } else {
+          mostrarMensagem('adminMessage', data.message || 'Erro ao adicionar arquivo', 'error');
+        }
+      } catch (error) {
+        mostrarMensagem('adminMessage', 'Erro ao adicionar arquivo. Verifique sua conexão.', 'error');
+      }
+    }
+
+    async function carregarArquivos() {
+      const fileListDiv = document.getElementById('fileList');
+      fileListDiv.innerHTML = '<p style="text-align: center; color: #666;">Carregando...</p>';
+      
+      try {
+        const response = await fetch(`${getApiUrl()}?action=list&category=${encodeURIComponent(currentCategory)}`);
+        const data = await response.json();
+        
+        if (data.error) {
+          throw new Error(data.error);
+        }
+        
+        const files = data.files || [];
+        
+        if (files.length === 0) {
+          fileListDiv.innerHTML = '<p style="text-align: center; color: #666; padding: 40px;">📂 Nenhum arquivo nesta categoria</p>';
+          return;
+        }
+
+        fileListDiv.innerHTML = '';
+        
+        files.forEach(file => {
+          const fileElement = document.createElement('div');
+          fileElement.className = 'file-item';
+          fileElement.innerHTML = `
+            <div class="file-info">
+              <strong>${file.titulo || 'Sem título'}</strong><br>
+              <small>Tipo: ${file.tipo} | Data: ${file.data || 'N/A'}</small>
+              <br>
+              <small style="color: #666; word-break: break-all;">URL: ${file.url}</small>
+            </div>
+            <div class="file-actions">
+              <button onclick="window.open('${file.url}', '_blank')">🔗 Abrir</button>
+              <button class="delete" onclick="deletarArquivo('${file.id}')">🗑️ Deletar</button>
+            </div>
+          `;
+          fileListDiv.appendChild(fileElement);
+        });
+      } catch (error) {
+        console.error('Erro ao carregar arquivos:', error);
+        fileListDiv.innerHTML = '<p style="text-align: center; color: #c0392b;">Erro ao carregar arquivos. Tente novamente.</p>';
+      }
+    }
+
+    async function deletarArquivo(id) {
+      if (confirm('Tem certeza que deseja deletar este arquivo? Esta ação não pode ser desfeita.')) {
+        try {
+          const response = await fetch(`${getApiUrl()}?action=delete&category=${encodeURIComponent(currentCategory)}&id=${encodeURIComponent(id)}`);
+          const data = await response.json();
+          
+          if (data.success) {
+            mostrarMensagem('adminMessage', 'Arquivo deletado com sucesso! 🗑️', 'success');
+            carregarArquivos();
+          } else {
+            mostrarMensagem('adminMessage', 'Erro ao deletar arquivo', 'error');
+          }
+        } catch (error) {
+          mostrarMensagem('adminMessage', 'Erro ao deletar arquivo. Tente novamente.', 'error');
+        }
+      }
+    }
+
+    function mostrarMensagem(elementId, mensagem, tipo) {
+      const element = document.getElementById(elementId);
+      element.innerHTML = `<div class="message ${tipo}">${mensagem}</div>`;
+      setTimeout(() => {
+        element.innerHTML = '';
+      }, 5000);
+    }
+
+    function isValidUrl(string) {
+      try {
+        new URL(string);
+        return true;
+      } catch (_) {
+        return false;
+      }
+    }
+
+    function getApiUrl() {
+      // URL do Web App do Google Apps Script
+      return 'https://script.google.com/macros/s/AKfycbwqdoWCfgflY5MzRWw0BfJJ-Cgg3XiWVpJlQfQA9OrHXD9lSyYjhIY7vbOxvwJdAzN3/exec';
+    }
+  </script>
+</body>
+</html>
