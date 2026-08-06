@@ -1,0 +1,406 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Portfólio - Design Apple Verde Militar</title>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, sans-serif;
+      background: linear-gradient(135deg, #2d5016 0%, #3d6b1e 30%, #7ab648 70%, #9acd32 100%);
+      min-height: 100vh;
+      color: #1a1a1a;
+    }
+
+    .container {
+      max-width: 1400px;
+      margin: 0 auto;
+      padding: 20px;
+    }
+
+    /* Header */
+    .header {
+      text-align: center;
+      padding: 80px 20px 60px;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .header::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background: rgba(255, 255, 255, 0.1);
+      backdrop-filter: blur(10px);
+      border-radius: 30px;
+      margin: 20px;
+    }
+
+    .header-content {
+      position: relative;
+      z-index: 1;
+    }
+
+    .header h1 {
+      font-size: 4em;
+      font-weight: 700;
+      color: white;
+      text-shadow: 0 2px 10px rgba(0, 0, 0, 0.3);
+      margin-bottom: 20px;
+    }
+
+    .header p {
+      font-size: 1.2em;
+      color: rgba(255, 255, 255, 0.9);
+      max-width: 600px;
+      margin: 0 auto;
+    }
+
+    /* Navigation Tabs */
+    .nav-tabs {
+      display: flex;
+      justify-content: center;
+      gap: 15px;
+      margin: 40px 0;
+      flex-wrap: wrap;
+    }
+
+    .nav-tab {
+      padding: 15px 30px;
+      background: rgba(255, 255, 255, 0.2);
+      backdrop-filter: blur(10px);
+      border: 2px solid rgba(255, 255, 255, 0.3);
+      border-radius: 50px;
+      color: white;
+      font-size: 1.1em;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+    }
+
+    .nav-tab:hover {
+      background: rgba(255, 255, 255, 0.3);
+      transform: translateY(-2px);
+      box-shadow: 0 10px 20px rgba(0, 0, 0, 0.2);
+    }
+
+    .nav-tab.active {
+      background: white;
+      color: #2d5016;
+      border-color: white;
+      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+    }
+
+    /* Content Grid */
+    .content-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
+      gap: 25px;
+      padding: 20px;
+    }
+
+    .media-card {
+      background: rgba(255, 255, 255, 0.95);
+      backdrop-filter: blur(20px);
+      border-radius: 20px;
+      overflow: hidden;
+      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+      transition: all 0.3s ease;
+      cursor: pointer;
+    }
+
+    .media-card:hover {
+      transform: translateY(-5px);
+      box-shadow: 0 20px 40px rgba(0, 0, 0, 0.3);
+    }
+
+    .media-preview {
+      width: 100%;
+      height: 300px;
+      background: linear-gradient(135deg, #2d5016 0%, #4a7a2e 100%);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .media-preview img, .media-preview video {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+    }
+
+    .audio-preview {
+      background: linear-gradient(135deg, #2d5016, #4a7a2e);
+      color: white;
+      font-size: 3em;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      height: 200px;
+    }
+
+    .media-info {
+      padding: 25px;
+    }
+
+    .media-title {
+      font-size: 1.3em;
+      font-weight: 600;
+      color: #2d5016;
+      margin-bottom: 10px;
+    }
+
+    .media-type {
+      display: inline-block;
+      padding: 5px 15px;
+      background: linear-gradient(135deg, #2d5016, #4a7a2e);
+      color: white;
+      border-radius: 20px;
+      font-size: 0.9em;
+      margin-bottom: 10px;
+    }
+
+    .media-date {
+      color: #666;
+      font-size: 0.9em;
+    }
+
+    /* Modal */
+    .modal {
+      display: none;
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: rgba(0, 0, 0, 0.9);
+      z-index: 1000;
+      backdrop-filter: blur(10px);
+    }
+
+    .modal-content {
+      position: relative;
+      width: 90%;
+      max-width: 1000px;
+      margin: 50px auto;
+      background: white;
+      border-radius: 30px;
+      padding: 30px;
+      max-height: 80vh;
+      overflow-y: auto;
+    }
+
+    .modal-close {
+      position: absolute;
+      top: 20px;
+      right: 20px;
+      width: 40px;
+      height: 40px;
+      background: #2d5016;
+      border: none;
+      border-radius: 50%;
+      color: white;
+      font-size: 1.5em;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .modal-close:hover {
+      background: #e74c3c;
+      transform: rotate(90deg);
+    }
+
+    .modal-media {
+      width: 100%;
+      border-radius: 20px;
+      overflow: hidden;
+      margin-bottom: 20px;
+    }
+
+    .modal-media img, .modal-media video {
+      width: 100%;
+      max-height: 500px;
+      object-fit: contain;
+    }
+
+    .modal-media audio {
+      width: 100%;
+      margin: 20px 0;
+    }
+
+    /* Footer Admin Icon */
+    .footer {
+      text-align: center;
+      padding: 40px 20px;
+      margin-top: 60px;
+    }
+
+    .admin-link {
+      display: inline-flex;
+      align-items: center;
+      gap: 10px;
+      padding: 15px 30px;
+      background: rgba(255, 255, 255, 0.2);
+      backdrop-filter: blur(10px);
+      border: 2px solid rgba(255, 255, 255, 0.3);
+      border-radius: 50px;
+      color: white;
+      text-decoration: none;
+      font-weight: 600;
+      transition: all 0.3s ease;
+    }
+
+    .admin-link:hover {
+      background: rgba(255, 255, 255, 0.3);
+      transform: translateY(-2px);
+      box-shadow: 0 10px 20px rgba(0, 0, 0, 0.2);
+    }
+
+    .loading {
+      text-align: center;
+      padding: 40px;
+      color: white;
+      font-size: 1.2em;
+    }
+
+    .empty-state {
+      text-align: center;
+      padding: 60px 20px;
+      color: white;
+      font-size: 1.3em;
+      opacity: 0.8;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <!-- Header -->
+    <header class="header">
+      <div class="header-content">
+        <h1>Meu Portfólio</h1>
+        <p>Trabalhos criativos em diferentes formatos e estilos</p>
+      </div>
+    </header>
+
+    <!-- Navigation -->
+    <nav class="nav-tabs" id="navTabs">
+      <div class="nav-tab active" onclick="changeCategory('Jingle', this)">🎵 Jingle</div>
+      <div class="nav-tab" onclick="changeCategory('Placa Pirulito', this)">🏗️ Placa Pirulito</div>
+      <div class="nav-tab" onclick="changeCategory('Praginha', this)">🌳 Praginha</div>
+    </nav>
+
+    <!-- Content Area -->
+    <div class="content-grid" id="contentGrid">
+      <div class="loading">Carregando conteúdo...</div>
+    </div>
+
+    <!-- Footer -->
+    <footer class="footer">
+      <a href="ADMIN_URL_AQUI" class="admin-link" target="_blank">
+        🔐 Área Administrativa
+      </a>
+    </footer>
+  </div>
+
+  <!-- Modal -->
+  <div class="modal" id="mediaModal">
+    <div class="modal-content">
+      <button class="modal-close" onclick="closeModal()">✕</button>
+      <div id="modalContent"></div>
+    </div>
+  </div>
+
+  <script>
+    // Substitua pela URL do seu Web App do Google Apps Script
+    const API_URL = 'https://script.google.com/macros/s/SEU_WEB_APP_URL/exec';
+    let currentCategory = 'Jingle';
+    
+    // Carregar conteúdo inicial
+    document.addEventListener('DOMContentLoaded', () => {
+      loadCategoryContent(currentCategory);
+    });
+
+    function changeCategory(category, element) {
+      currentCategory = category;
+      
+      // Atualizar tabs
+      document.querySelectorAll('.nav-tab').forEach(tab => {
+        tab.classList.remove('active');
+      });
+      element.classList.add('active');
+      
+      // Carregar conteúdo
+      loadCategoryContent(category);
+    }
+
+    function loadCategoryContent(category) {
+      const grid = document.getElementById('contentGrid');
+      grid.innerHTML = '<div class="loading">Carregando conteúdo...</div>';
+      
+      // Como estamos usando Google Sheets, vamos fazer fetch dos dados
+      // Mas primeiro você precisa configurar o Google Sheets para servir como API
+      
+      // Simulação de carregamento (substituir pela chamada real da API)
+      setTimeout(() => {
+        // Aqui você faria fetch(API_URL + '?action=list&category=' + category)
+        // Por enquanto, mostramos uma mensagem de exemplo
+        grid.innerHTML = '<div class="empty-state">Configure a URL da API do Google Sheets para carregar o conteúdo real</div>';
+      }, 1000);
+    }
+
+    function openMedia(mediaData) {
+      const modal = document.getElementById('mediaModal');
+      const modalContent = document.getElementById('modalContent');
+      
+      let mediaHTML = '';
+      
+      if (mediaData.tipo === 'imagem') {
+        mediaHTML = `<div class="modal-media"><img src="${mediaData.url}" alt="${mediaData.titulo}"></div>`;
+      } else if (mediaData.tipo === 'video') {
+        mediaHTML = `<div class="modal-media"><video controls><source src="${mediaData.url}" type="video/mp4"></video></div>`;
+      } else if (mediaData.tipo === 'audio') {
+        mediaHTML = `<div class="modal-media"><audio controls><source src="${mediaData.url}" type="audio/mpeg"></audio></div>`;
+      }
+      
+      mediaHTML += `<h2>${mediaData.titulo}</h2>`;
+      
+      modalContent.innerHTML = mediaHTML;
+      modal.style.display = 'block';
+    }
+
+    function closeModal() {
+      document.getElementById('mediaModal').style.display = 'none';
+    }
+
+    // Fechar modal com ESC
+    document.addEventListener('keydown', (e) => {
+      if (e.key === 'Escape') {
+        closeModal();
+      }
+    });
+
+    // Fechar modal clicando fora
+    document.getElementById('mediaModal').addEventListener('click', (e) => {
+      if (e.target === document.getElementById('mediaModal')) {
+        closeModal();
+      }
+    });
+  </script>
+</body>
+</html>
