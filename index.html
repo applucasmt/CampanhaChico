@@ -52,7 +52,6 @@
             text-shadow: 0 4px 15px rgba(0,0,0,0.2);
         }
 
-        /* --- Estilo Apple Tabs (Segmented Control) --- */
         .tabs-wrapper {
             display: flex;
             justify-content: center;
@@ -69,11 +68,11 @@
             -webkit-backdrop-filter: blur(15px);
             overflow-x: auto;
             max-width: 100%;
-            scrollbar-width: none; /* Esconde scrollbar no Firefox */
+            scrollbar-width: none; 
         }
         
         .tabs-container::-webkit-scrollbar {
-            display: none; /* Esconde scrollbar no Chrome/Safari */
+            display: none; 
         }
 
         .tab-btn {
@@ -100,7 +99,6 @@
             font-weight: 600;
         }
 
-        /* --- Grid e Cards --- */
         .portfolio-grid {
             display: grid;
             grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
@@ -140,7 +138,7 @@
             display: flex;
             justify-content: center;
             align-items: center;
-            aspect-ratio: 16/9; /* Proporção profissional */
+            aspect-ratio: 16/9; 
         }
 
         .media-container img, .media-container video {
@@ -171,7 +169,6 @@
             opacity: 0.8;
         }
 
-        /* --- Rodapé e Admin --- */
         footer {
             text-align: center;
             padding: 20px;
@@ -187,7 +184,6 @@
 
         .admin-icon:hover { opacity: 1; }
 
-        /* --- Painel Admin --- */
         .admin-modal {
             position: fixed;
             top: 0; left: 0; width: 100%; height: 100%;
@@ -272,7 +268,6 @@
 
     <div class="tabs-wrapper">
         <div class="tabs-container" id="category-container">
-            <!-- Abas injetadas via JS -->
         </div>
     </div>
 
@@ -284,7 +279,6 @@
         <span class="admin-icon" onclick="toggleAdmin()">🔒</span>
     </footer>
 
-    <!-- Painel Administrador -->
     <div class="admin-modal" id="admin-modal">
         <div class="glass-panel admin-content">
             <span class="close-admin" onclick="toggleAdmin()">✕</span>
@@ -313,7 +307,6 @@
 
     <script>
         // ====================================================================
-        // COLOQUE A NOVA URL DO SEU GOOGLE APPS SCRIPT AQUI
         const WEB_APP_URL = "https://script.google.com/macros/s/AKfycbzWzIg8eyb9LMx82AD25XB9E9ypBcMFMpITZ-zOKWFKf7P2ywAnqqAypZQoIOxngclH4w/exec"; 
         // ====================================================================
 
@@ -325,7 +318,6 @@
                 const response = await fetch(WEB_APP_URL);
                 const data = await response.json();
                 
-                // Inverte os itens para mostrar os mais recentes primeiro
                 allItems = data.itens.reverse(); 
                 renderCategories(data.categorias);
                 renderItems();
@@ -374,15 +366,19 @@
                     mediaHtml = `<div class="media-container"><img src="${item.url}" alt="${item.titulo}" loading="lazy"></div>`;
                 } 
                 else if (item.tipo === 'video') {
-                    // Preload metadata ajuda no carregamento de vídeos do Drive
                     mediaHtml = `<div class="media-container"><video src="${item.url}" controls preload="metadata"></video></div>`;
                 } 
                 else if (item.tipo === 'audio') {
-                    // Layout específico para áudio ficar mais bonito no grid
+                    // SOLUÇÃO DO ÁUDIO: Adicionando sub-tags 'source' para forçar a leitura correta pelo navegador
                     mediaHtml = `
                     <div class="audio-wrapper">
                         <div class="audio-icon">🎵</div>
-                        <audio src="${item.url}" controls preload="metadata"></audio>
+                        <audio controls preload="auto">
+                            <source src="${item.url}" type="audio/mpeg">
+                            <source src="${item.url}" type="audio/wav">
+                            <source src="${item.url}" type="audio/ogg">
+                            Seu navegador não suporta a tag de áudio.
+                        </audio>
                     </div>`;
                 }
 
@@ -461,7 +457,6 @@
             reader.readAsDataURL(file);
         }
 
-        // Inicia a aplicação
         carregarDados();
     </script>
 </body>
