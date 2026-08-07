@@ -11,8 +11,7 @@
             --glass-bg: rgba(255, 255, 255, 0.1);
             --glass-border: rgba(255, 255, 255, 0.2);
             --apple-font: -apple-system, BlinkMacSystemFont, "SF Pro Text", "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
-            --spotify-dark: #181818;
-            --spotify-card: #282828;
+            --player-bg: #181818;
         }
 
         * { box-sizing: border-box; margin: 0; padding: 0; }
@@ -26,7 +25,7 @@
             display: flex;
             flex-direction: column;
             -webkit-font-smoothing: antialiased;
-            padding-bottom: 100px; 
+            padding-bottom: 120px; 
         }
 
         .glass-panel {
@@ -58,25 +57,42 @@
         .media-container { width: 100%; border-radius: 12px; overflow: hidden; background: rgba(0,0,0,0.3); display: flex; justify-content: center; align-items: center; aspect-ratio: 16/9; }
         .media-container img, .media-container video { width: 100%; height: 100%; object-fit: cover; }
 
-        /* Estilo Spotify para Áudios */
         .audio-card { background: rgba(0,0,0,0.4); border-radius: 16px; position: relative; }
         .audio-cover-wrapper { width: 100%; aspect-ratio: 1/1; border-radius: 12px; overflow: hidden; position: relative; margin-bottom: 15px; box-shadow: 0 8px 24px rgba(0,0,0,0.4); }
         .audio-cover-wrapper img { width: 100%; height: 100%; object-fit: cover; transition: transform 0.3s; }
         .audio-card:hover .audio-cover-wrapper img { transform: scale(1.05); }
-        .play-btn-overlay { position: absolute; bottom: 10px; right: 10px; background: var(--verde-limao); color: var(--verde-militar); width: 45px; height: 45px; border-radius: 50%; display: flex; justify-content: center; align-items: center; font-size: 1.5rem; opacity: 0; transform: translateY(10px); transition: all 0.3s; box-shadow: 0 8px 16px rgba(0,0,0,0.3); padding-left: 4px; }
+        .play-btn-overlay { position: absolute; bottom: 10px; right: 10px; background: var(--verde-limao); color: var(--verde-militar); width: 45px; height: 45px; border-radius: 50%; display: flex; justify-content: center; align-items: center; font-size: 1.2rem; opacity: 0; transform: translateY(10px); transition: all 0.3s; box-shadow: 0 8px 16px rgba(0,0,0,0.3); padding-left: 4px; }
         .audio-card:hover .play-btn-overlay { opacity: 1; transform: translateY(0); }
 
-        /* Player Global Flutuante */
-        .global-player { position: fixed; bottom: 20px; left: 50%; transform: translateX(-50%) translateY(150%); width: 95%; max-width: 900px; background: rgba(20, 20, 20, 0.95); backdrop-filter: blur(20px); border: 1px solid rgba(255,255,255,0.1); border-radius: 100px; display: flex; align-items: center; justify-content: space-between; padding: 10px 20px 10px 10px; z-index: 9999; box-shadow: 0 20px 40px rgba(0,0,0,0.5); transition: transform 0.5s cubic-bezier(0.25, 0.8, 0.25, 1); }
+        /* =========================================
+           PLAYER GLOBAL PERSONALIZADO (NOVO VISUAL)
+           ========================================= */
+        .global-player { position: fixed; bottom: 20px; left: 50%; transform: translateX(-50%) translateY(150%); width: 95%; max-width: 800px; background: rgba(24, 24, 24, 0.95); backdrop-filter: blur(25px); -webkit-backdrop-filter: blur(25px); border: 1px solid rgba(255,255,255,0.1); border-radius: 24px; display: flex; align-items: center; justify-content: space-between; padding: 12px 20px 12px 12px; z-index: 9999; box-shadow: 0 20px 40px rgba(0,0,0,0.6); transition: transform 0.5s cubic-bezier(0.25, 0.8, 0.25, 1); }
         .global-player.active { transform: translateX(-50%) translateY(0); }
-        .track-info { display: flex; align-items: center; gap: 15px; width: 30%; min-width: 150px; }
-        .track-info img { width: 60px; height: 60px; border-radius: 50%; object-fit: cover; box-shadow: 0 4px 10px rgba(0,0,0,0.3); }
+        
+        .track-info { display: flex; align-items: center; gap: 15px; width: 35%; min-width: 180px; }
+        .track-info img { width: 55px; height: 55px; border-radius: 12px; object-fit: cover; box-shadow: 0 4px 10px rgba(0,0,0,0.3); }
         .track-text { display: flex; flex-direction: column; overflow: hidden; white-space: nowrap; }
         .track-text h4 { font-size: 1rem; margin: 0; color: #fff; text-overflow: ellipsis; overflow: hidden; }
         .track-text p { font-size: 0.8rem; margin: 0; color: #aaa; text-overflow: ellipsis; overflow: hidden; }
-        .track-controls { width: 60%; display: flex; justify-content: center; }
-        .track-controls audio { width: 100%; max-width: 500px; height: 40px; outline: none; }
-        .close-player { background: none; border: none; color: #aaa; font-size: 1.5rem; cursor: pointer; padding: 0 10px; transition: color 0.3s; }
+        
+        .custom-player-controls { display: flex; align-items: center; gap: 15px; width: 55%; justify-content: center; }
+        
+        /* Botão Play/Pause Redondo */
+        .play-pause-btn { background: #fff; color: #000; border: none; width: 40px; height: 40px; border-radius: 50%; font-size: 1.2rem; display: flex; justify-content: center; align-items: center; cursor: pointer; transition: transform 0.2s; }
+        .play-pause-btn:hover { transform: scale(1.05); }
+        
+        /* Barra de Progresso */
+        .progress-wrapper { display: flex; align-items: center; gap: 10px; flex: 1; max-width: 400px; }
+        .time-text { font-size: 0.75rem; color: #aaa; min-width: 35px; text-align: center; }
+        
+        input[type=range] { -webkit-appearance: none; width: 100%; background: transparent; cursor: pointer; }
+        input[type=range]:focus { outline: none; }
+        input[type=range]::-webkit-slider-runnable-track { width: 100%; height: 5px; background: rgba(255,255,255,0.2); border-radius: 5px; }
+        input[type=range]::-webkit-slider-thumb { -webkit-appearance: none; height: 12px; width: 12px; border-radius: 50%; background: var(--verde-limao); margin-top: -3.5px; transition: transform 0.1s; }
+        input[type=range]:hover::-webkit-slider-thumb { transform: scale(1.2); }
+        
+        .close-player { background: none; border: none; color: #aaa; font-size: 1.5rem; cursor: pointer; padding: 0 10px; transition: color 0.3s; margin-left: 10px; }
         .close-player:hover { color: #fff; }
 
         footer { text-align: center; padding: 20px; margin-top: auto; }
@@ -113,26 +129,35 @@
         <div class="loading">Sincronizando arquivos...</div>
     </div>
 
-    <!-- Player Global Estilo Spotify -->
+    <!-- PLAYER GLOBAL CUSTOMIZADO -->
     <div class="global-player" id="global-player">
         <div class="track-info">
             <img id="player-cover" src="" alt="Capa">
             <div class="track-text">
-                <h4 id="player-title">Título</h4>
-                <p id="player-desc">Descrição</p>
+                <h4 id="player-title" title="Título">Título</h4>
+                <p id="player-desc" title="Descrição">Descrição</p>
             </div>
         </div>
-        <div class="track-controls">
-            <audio id="main-audio" controls controlsList="nodownload"></audio>
+        
+        <div class="custom-player-controls">
+            <button class="play-pause-btn" id="play-pause-btn" onclick="togglePlay()">⏸</button>
+            <div class="progress-wrapper">
+                <span class="time-text" id="current-time">0:00</span>
+                <input type="range" id="seek-bar" value="0" min="0" max="100" step="1">
+                <span class="time-text" id="total-time">0:00</span>
+            </div>
         </div>
+
         <button class="close-player" onclick="closePlayer()">✕</button>
+        <!-- Áudio Oculto (quem toca a música de verdade) -->
+        <audio id="main-audio" style="display: none;"></audio>
     </div>
 
     <footer>
         <span class="admin-icon" onclick="checkPassword()">🔒</span>
     </footer>
 
-    <!-- Painel de Administrador (Protegido) -->
+    <!-- Painel de Administrador -->
     <div class="admin-modal" id="admin-modal">
         <div class="glass-panel admin-content">
             <span class="close-admin" onclick="closeAdmin()">✕</span>
@@ -170,7 +195,9 @@
 
     <script>
         // ====================================================================
+        // COLE AQUI A NOVA URL QUE VOCÊ GEROU NO APPS SCRIPT
         const WEB_APP_URL = "https://script.google.com/macros/s/AKfycbzWzIg8eyb9LMx82AD25XB9E9ypBcMFMpITZ-zOKWFKf7P2ywAnqqAypZQoIOxngclH4w/exec"; 
+        
         const CLOUDINARY_CLOUD_NAME = "gyzeubzm"; 
         const CLOUDINARY_UPLOAD_PRESET = "ml_default"; 
         // ====================================================================
@@ -193,7 +220,6 @@
         function renderCategories(categorias) {
             const container = document.getElementById('category-container');
             const select = document.getElementById('item-category');
-            
             container.innerHTML = `<button class="tab-btn active" onclick="filterCategory('Todas', this)">Todas</button>`;
             select.innerHTML = '';
             categorias.forEach(cat => {
@@ -237,6 +263,7 @@
                         </div>`;
                 } 
                 else if (item.tipo === 'audio') {
+                    // Se não tiver capa, usa essa imagem legal padrão
                     const defaultCover = `https://ui-avatars.com/api/?name=%E2%99%AB&background=d4ff33&color=4B5320&size=256&font-size=0.5`;
                     const coverImg = item.capa ? item.capa : defaultCover;
                     
@@ -260,9 +287,17 @@
             });
         }
 
+        // ==========================================
+        // LÓGICA DO PLAYER DE ÁUDIO CUSTOMIZADO
+        // ==========================================
+        const audioEl = document.getElementById('main-audio');
+        const playBtn = document.getElementById('play-pause-btn');
+        const seekBar = document.getElementById('seek-bar');
+        const currentTimeText = document.getElementById('current-time');
+        const totalTimeText = document.getElementById('total-time');
+
         function openSpotifyPlayer(url, title, desc, coverUrl) {
             const player = document.getElementById('global-player');
-            const audioEl = document.getElementById('main-audio');
             
             document.getElementById('player-cover').src = coverUrl;
             document.getElementById('player-title').innerText = title;
@@ -271,14 +306,62 @@
             audioEl.src = url;
             player.classList.add('active');
             audioEl.play();
+            playBtn.innerText = '⏸'; // Atualiza ícone para Pause
+        }
+
+        function togglePlay() {
+            if (audioEl.paused) {
+                audioEl.play();
+                playBtn.innerText = '⏸';
+            } else {
+                audioEl.pause();
+                playBtn.innerText = '▶';
+            }
         }
 
         function closePlayer() {
             const player = document.getElementById('global-player');
-            const audioEl = document.getElementById('main-audio');
             player.classList.remove('active');
             audioEl.pause();
+            audioEl.currentTime = 0;
         }
+
+        // Formata o tempo em Minutos:Segundos
+        function formatTime(seconds) {
+            if (isNaN(seconds)) return "0:00";
+            let min = Math.floor(seconds / 60);
+            let sec = Math.floor(seconds % 60);
+            if (sec < 10) sec = "0" + sec;
+            return `${min}:${sec}`;
+        }
+
+        // Atualiza a barra enquanto a música toca
+        audioEl.addEventListener('timeupdate', () => {
+            if (audioEl.duration) {
+                const progressPercent = (audioEl.currentTime / audioEl.duration) * 100;
+                seekBar.value = progressPercent;
+                currentTimeText.innerText = formatTime(audioEl.currentTime);
+            }
+        });
+
+        // Pega o tempo total quando a música carrega
+        audioEl.addEventListener('loadedmetadata', () => {
+            totalTimeText.innerText = formatTime(audioEl.duration);
+        });
+
+        // Quando o usuário arrasta a barra
+        seekBar.addEventListener('input', () => {
+            const seekTo = audioEl.duration * (seekBar.value / 100);
+            audioEl.currentTime = seekTo;
+        });
+
+        // Quando a música acaba
+        audioEl.addEventListener('ended', () => {
+            playBtn.innerText = '▶';
+            seekBar.value = 0;
+            currentTimeText.innerText = "0:00";
+        });
+
 
         // ==========================================
         // PAINEL ADMINISTRATIVO E SENHA
@@ -344,12 +427,13 @@
 
             try {
                 let capaUrl = "";
-                if (tipo === 'audio' && coverInput.files[0]) {
+                // Confere se é áudio E se o usuário selecionou uma imagem
+                if (tipo === 'audio' && coverInput.files.length > 0) {
                     btn.innerText = '1/2: Enviando Capa...';
                     capaUrl = await uploadToCloudinary(coverInput.files[0]);
                 }
 
-                btn.innerText = (tipo === 'audio' && coverInput.files[0]) ? '2/2: Enviando Arquivo Principal...' : 'Enviando para Nuvem...';
+                btn.innerText = (tipo === 'audio' && coverInput.files.length > 0) ? '2/2: Enviando Arquivo Principal...' : 'Enviando para Nuvem...';
                 const fileUrl = await uploadToCloudinary(fileInput.files[0]);
 
                 if (!fileUrl) throw new Error("Erro no upload principal.");
