@@ -1,738 +1,397 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Portfólio - Design Apple Verde Militar</title>
-  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🎨</text></svg>">
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
-  <style>
-    * {
-      margin: 0;
-      padding: 0;
-      box-sizing: border-box;
-    }
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Portfólio</title>
+    <style>
+        /* Estilo Apple e Cores Solicitadas */
+        :root {
+            --verde-militar: #4B5320;
+            --verde-limao: #d4ff33;
+            --glass-bg: rgba(255, 255, 255, 0.15);
+            --glass-border: rgba(255, 255, 255, 0.3);
+        }
 
-    body {
-      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, sans-serif;
-      background: linear-gradient(135deg, #2d5016 0%, #3d6b1e 30%, #7ab648 70%, #9acd32 100%);
-      min-height: 100vh;
-      color: #1a1a1a;
-      background-attachment: fixed;
-    }
+        body {
+            margin: 0;
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+            background: linear-gradient(135deg, var(--verde-militar), var(--verde-limao));
+            background-attachment: fixed;
+            color: #fff;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
 
-    .container {
-      max-width: 1400px;
-      margin: 0 auto;
-      padding: 20px;
-    }
+        /* Efeito Glassmorphism (Vidro Fosco) Apple */
+        .glass {
+            background: var(--glass-bg);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            border: 1px solid var(--glass-border);
+            border-radius: 24px;
+            box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.2);
+        }
 
-    .header {
-      text-align: center;
-      padding: 80px 20px 60px;
-      position: relative;
-      overflow: hidden;
-    }
+        header {
+            text-align: center;
+            padding: 40px 20px 20px;
+        }
 
-    .header::before {
-      content: '';
-      position: absolute;
-      top: 0;
-      left: 0;
-      right: 0;
-      bottom: 0;
-      background: rgba(255, 255, 255, 0.1);
-      backdrop-filter: blur(10px);
-      border-radius: 30px;
-      margin: 20px;
-    }
+        header h1 {
+            font-weight: 700;
+            letter-spacing: -1px;
+            margin: 0;
+            font-size: 2.5rem;
+            text-shadow: 0 2px 10px rgba(0,0,0,0.3);
+        }
 
-    .header-content {
-      position: relative;
-      z-index: 1;
-    }
+        /* Filtro de Categorias */
+        .categories {
+            display: flex;
+            justify-content: center;
+            gap: 10px;
+            padding: 20px;
+            flex-wrap: wrap;
+        }
 
-    .header h1 {
-      font-size: 4em;
-      font-weight: 700;
-      color: white;
-      text-shadow: 0 2px 10px rgba(0, 0, 0, 0.3);
-      margin-bottom: 20px;
-    }
+        .cat-btn {
+            background: rgba(0,0,0,0.3);
+            border: 1px solid var(--glass-border);
+            color: white;
+            padding: 10px 24px;
+            border-radius: 30px;
+            cursor: pointer;
+            font-size: 1rem;
+            transition: all 0.3s ease;
+        }
 
-    .header p {
-      font-size: 1.2em;
-      color: rgba(255, 255, 255, 0.9);
-      max-width: 600px;
-      margin: 0 auto;
-    }
+        .cat-btn:hover, .cat-btn.active {
+            background: var(--verde-limao);
+            color: var(--verde-militar);
+            border-color: var(--verde-limao);
+            font-weight: bold;
+        }
 
-    .nav-tabs {
-      display: flex;
-      justify-content: center;
-      gap: 15px;
-      margin: 40px 0;
-      flex-wrap: wrap;
-    }
+        /* Grid de Portfólio */
+        .portfolio-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+            gap: 20px;
+            padding: 20px;
+            max-width: 1200px;
+            margin: 0 auto;
+            flex: 1;
+        }
 
-    .nav-tab {
-      padding: 15px 30px;
-      background: rgba(255, 255, 255, 0.2);
-      backdrop-filter: blur(10px);
-      border: 2px solid rgba(255, 255, 255, 0.3);
-      border-radius: 50px;
-      color: white;
-      font-size: 1.1em;
-      font-weight: 600;
-      cursor: pointer;
-      transition: all 0.3s ease;
-      text-transform: uppercase;
-      letter-spacing: 1px;
-      user-select: none;
-    }
+        .portfolio-card {
+            padding: 20px;
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+            transition: transform 0.3s ease;
+        }
 
-    .nav-tab:hover {
-      background: rgba(255, 255, 255, 0.3);
-      transform: translateY(-2px);
-      box-shadow: 0 10px 20px rgba(0, 0, 0, 0.2);
-    }
+        .portfolio-card:hover {
+            transform: translateY(-5px);
+        }
 
-    .nav-tab.active {
-      background: white;
-      color: #2d5016;
-      border-color: white;
-      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
-      transform: scale(1.05);
-    }
+        .portfolio-card h3 {
+            margin: 0;
+            font-size: 1.2rem;
+            text-align: center;
+        }
 
-    .content-grid {
-      display: grid;
-      grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
-      gap: 25px;
-      padding: 20px;
-    }
+        .media-container {
+            width: 100%;
+            border-radius: 12px;
+            overflow: hidden;
+            background: rgba(0,0,0,0.2);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
 
-    .media-card {
-      background: rgba(255, 255, 255, 0.95);
-      backdrop-filter: blur(20px);
-      border-radius: 20px;
-      overflow: hidden;
-      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
-      transition: all 0.3s ease;
-      cursor: pointer;
-      animation: fadeIn 0.5s ease;
-    }
+        .media-container img, .media-container video {
+            width: 100%;
+            height: auto;
+            max-height: 250px;
+            object-fit: cover;
+        }
 
-    @keyframes fadeIn {
-      from { opacity: 0; transform: translateY(20px); }
-      to { opacity: 1; transform: translateY(0); }
-    }
+        .media-container audio {
+            width: 100%;
+            padding: 10px;
+        }
 
-    .media-card:hover {
-      transform: translateY(-5px);
-      box-shadow: 0 20px 40px rgba(0, 0, 0, 0.3);
-    }
+        /* Rodapé e Admin */
+        footer {
+            text-align: center;
+            padding: 30px;
+            margin-top: auto;
+        }
 
-    .media-preview {
-      width: 100%;
-      height: 300px;
-      background: linear-gradient(135deg, #2d5016 0%, #4a7a2e 100%);
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      position: relative;
-      overflow: hidden;
-    }
+        .admin-icon {
+            cursor: pointer;
+            font-size: 1.5rem;
+            opacity: 0.7;
+            transition: opacity 0.3s;
+        }
 
-    .media-preview img, .media-preview video {
-      width: 100%;
-      height: 100%;
-      object-fit: cover;
-    }
+        .admin-icon:hover { opacity: 1; }
 
-    .spotify-player {
-      background: linear-gradient(135deg, #1a1a1a 0%, #2d2d2d 100%);
-      color: white;
-      padding: 30px 25px;
-      height: 300px;
-      display: flex;
-      flex-direction: column;
-      justify-content: center;
-      position: relative;
-      overflow: hidden;
-    }
+        /* Painel Admin (Modal) */
+        .admin-modal {
+            position: fixed;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(0,0,0,0.6);
+            display: none;
+            justify-content: center;
+            align-items: center;
+            z-index: 1000;
+        }
 
-    .spotify-player::before {
-      content: '';
-      position: absolute;
-      top: 0;
-      left: 0;
-      right: 0;
-      bottom: 0;
-      background: linear-gradient(135deg, rgba(45, 80, 22, 0.3), rgba(122, 182, 72, 0.3));
-      z-index: 0;
-    }
+        .admin-content {
+            padding: 30px;
+            width: 90%;
+            max-width: 500px;
+            max-height: 90vh;
+            overflow-y: auto;
+            position: relative;
+        }
 
-    .spotify-content {
-      position: relative;
-      z-index: 1;
-      text-align: center;
-    }
+        .close-admin {
+            position: absolute;
+            top: 20px; right: 20px;
+            cursor: pointer;
+            font-weight: bold;
+            font-size: 1.2rem;
+        }
 
-    .spotify-art {
-      width: 100px;
-      height: 100px;
-      background: linear-gradient(135deg, #2d5016, #7ab648);
-      border-radius: 50%;
-      margin: 0 auto 20px;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      font-size: 2.5em;
-      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
-    }
+        .admin-section {
+            margin-bottom: 30px;
+            background: rgba(0,0,0,0.2);
+            padding: 20px;
+            border-radius: 16px;
+        }
 
-    .spotify-art.playing {
-      animation: rotate 20s linear infinite;
-    }
+        input, select, button {
+            width: 100%;
+            padding: 12px;
+            margin-top: 8px;
+            border-radius: 10px;
+            border: none;
+            box-sizing: border-box;
+            font-family: inherit;
+        }
 
-    .spotify-art.paused {
-      animation-play-state: paused;
-    }
+        input, select {
+            background: rgba(255,255,255,0.9);
+            color: #333;
+        }
 
-    @keyframes rotate {
-      from { transform: rotate(0deg); }
-      to { transform: rotate(360deg); }
-    }
+        button {
+            background: var(--verde-limao);
+            color: var(--verde-militar);
+            font-weight: bold;
+            cursor: pointer;
+            margin-top: 15px;
+        }
 
-    .spotify-info {
-      margin-bottom: 20px;
-    }
-
-    .spotify-title {
-      font-size: 1.1em;
-      font-weight: 600;
-      margin-bottom: 5px;
-      white-space: nowrap;
-      overflow: hidden;
-      text-overflow: ellipsis;
-    }
-
-    .spotify-controls {
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      gap: 20px;
-    }
-
-    .spotify-btn {
-      width: 45px;
-      height: 45px;
-      border-radius: 50%;
-      border: 2px solid rgba(255, 255, 255, 0.3);
-      background: rgba(255, 255, 255, 0.1);
-      color: white;
-      cursor: pointer;
-      transition: all 0.3s ease;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      font-size: 1.2em;
-    }
-
-    .spotify-btn:hover {
-      background: rgba(255, 255, 255, 0.2);
-      transform: scale(1.1);
-    }
-
-    .spotify-btn.play-btn {
-      width: 60px;
-      height: 60px;
-      background: white;
-      color: #2d5016;
-      border: none;
-      font-size: 1.5em;
-      box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
-    }
-
-    .spotify-btn.play-btn:hover {
-      transform: scale(1.1);
-      box-shadow: 0 8px 20px rgba(0, 0, 0, 0.4);
-    }
-
-    .spotify-progress {
-      width: 100%;
-      height: 4px;
-      background: rgba(255, 255, 255, 0.2);
-      border-radius: 2px;
-      margin-top: 15px;
-      cursor: pointer;
-    }
-
-    .spotify-progress-bar {
-      height: 100%;
-      background: #7ab648;
-      border-radius: 2px;
-      width: 0%;
-      transition: width 0.1s linear;
-    }
-
-    .spotify-time {
-      display: flex;
-      justify-content: space-between;
-      font-size: 0.75em;
-      color: rgba(255, 255, 255, 0.6);
-      margin-top: 5px;
-    }
-
-    .media-info {
-      padding: 25px;
-    }
-
-    .media-title {
-      font-size: 1.3em;
-      font-weight: 600;
-      color: #2d5016;
-      margin-bottom: 10px;
-    }
-
-    .media-type {
-      display: inline-block;
-      padding: 5px 15px;
-      background: linear-gradient(135deg, #2d5016, #4a7a2e);
-      color: white;
-      border-radius: 20px;
-      font-size: 0.9em;
-      margin-bottom: 10px;
-      text-transform: capitalize;
-    }
-
-    .media-date {
-      color: #666;
-      font-size: 0.9em;
-    }
-
-    .modal {
-      display: none;
-      position: fixed;
-      top: 0;
-      left: 0;
-      width: 100%;
-      height: 100%;
-      background: rgba(0, 0, 0, 0.9);
-      z-index: 1000;
-      backdrop-filter: blur(10px);
-    }
-
-    .modal-content {
-      position: relative;
-      width: 90%;
-      max-width: 1000px;
-      margin: 50px auto;
-      background: white;
-      border-radius: 30px;
-      padding: 30px;
-      max-height: 80vh;
-      overflow-y: auto;
-    }
-
-    .modal-close {
-      position: absolute;
-      top: 20px;
-      right: 20px;
-      width: 40px;
-      height: 40px;
-      background: #2d5016;
-      border: none;
-      border-radius: 50%;
-      color: white;
-      font-size: 1.5em;
-      cursor: pointer;
-      transition: all 0.3s ease;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      z-index: 10;
-    }
-
-    .modal-close:hover {
-      background: #e74c3c;
-      transform: rotate(90deg);
-    }
-
-    .footer {
-      text-align: center;
-      padding: 40px 20px;
-      margin-top: 60px;
-    }
-
-    .admin-link {
-      display: inline-flex;
-      align-items: center;
-      gap: 10px;
-      padding: 15px 30px;
-      background: rgba(255, 255, 255, 0.2);
-      backdrop-filter: blur(10px);
-      border: 2px solid rgba(255, 255, 255, 0.3);
-      border-radius: 50px;
-      color: white;
-      text-decoration: none;
-      font-weight: 600;
-      transition: all 0.3s ease;
-    }
-
-    .admin-link:hover {
-      background: rgba(255, 255, 255, 0.3);
-      transform: translateY(-2px);
-      box-shadow: 0 10px 20px rgba(0, 0, 0, 0.2);
-    }
-
-    .loading {
-      text-align: center;
-      padding: 60px 20px;
-      color: white;
-      font-size: 1.2em;
-      grid-column: 1 / -1;
-    }
-
-    .loading-spinner {
-      display: inline-block;
-      width: 50px;
-      height: 50px;
-      border: 3px solid rgba(255, 255, 255, 0.3);
-      border-radius: 50%;
-      border-top-color: white;
-      animation: spin 1s ease-in-out infinite;
-      margin-bottom: 20px;
-    }
-
-    @keyframes spin {
-      to { transform: rotate(360deg); }
-    }
-
-    .empty-state {
-      text-align: center;
-      padding: 60px 20px;
-      color: white;
-      font-size: 1.3em;
-      opacity: 0.8;
-      grid-column: 1 / -1;
-    }
-
-    .error-state {
-      text-align: center;
-      padding: 40px 20px;
-      color: white;
-      background: rgba(231, 76, 60, 0.3);
-      border-radius: 15px;
-      grid-column: 1 / -1;
-    }
-
-    @media (max-width: 768px) {
-      .header h1 { font-size: 2.5em; }
-      .content-grid { grid-template-columns: 1fr; }
-      .nav-tab { padding: 12px 20px; font-size: 0.9em; }
-    }
-  </style>
+        .loading {
+            text-align: center;
+            padding: 40px;
+            font-size: 1.2rem;
+        }
+    </style>
 </head>
 <body>
-  <div class="container">
-    <header class="header">
-      <div class="header-content">
+
+    <header>
         <h1>Meu Portfólio</h1>
-        <p>Trabalhos criativos em diferentes formatos e estilos</p>
-      </div>
     </header>
 
-    <nav class="nav-tabs" id="navTabs"></nav>
-
-    <div class="content-grid" id="contentGrid">
-      <div class="loading">
-        <div class="loading-spinner"></div>
-        <p>Carregando conteúdo...</p>
-      </div>
+    <div class="categories" id="category-container">
+        <!-- Categorias serão injetadas aqui -->
     </div>
 
-    <footer class="footer">
-      <a href="admin.html" class="admin-link">🔐 Área Administrativa</a>
+    <div class="portfolio-grid" id="portfolio-grid">
+        <div class="loading">Carregando portfólio...</div>
+    </div>
+
+    <footer>
+        <span class="admin-icon" onclick="toggleAdmin()">🔒</span>
     </footer>
-  </div>
 
-  <div class="modal" id="mediaModal">
-    <div class="modal-content">
-      <button class="modal-close" onclick="closeModal()">✕</button>
-      <div id="modalContent"></div>
-    </div>
-  </div>
+    <!-- Painel Administrador -->
+    <div class="admin-modal" id="admin-modal">
+        <div class="glass admin-content">
+            <span class="close-admin" onclick="toggleAdmin()">X</span>
+            <h2 style="margin-top: 0;">Painel de Controle</h2>
 
-  <script>
-    const API_URL = 'https://script.google.com/macros/s/AKfycbz1CWxOquwHYG6hBxfcq2RckDsHPYiTYeqT-62AzceHpFOnnmFF3N1nk80_C0X6OEQtGg/exec';
-    let currentCategory = '';
-    let categories = [];
-    let currentAudio = null;
-    
-    document.addEventListener('DOMContentLoaded', () => {
-      loadCategories();
-    });
+            <div class="admin-section">
+                <h3>Criar Nova Categoria</h3>
+                <input type="text" id="new-category-name" placeholder="Nome da Categoria">
+                <button onclick="addCategory()">Adicionar Categoria</button>
+            </div>
 
-    async function loadCategories() {
-      try {
-        const response = await fetch(`${API_URL}?action=getCategories`);
-        const data = await response.json();
-        
-        if (data.categories && data.categories.length > 0) {
-          categories = data.categories;
-          currentCategory = categories[0];
-          renderNavTabs();
-          loadCategoryContent(currentCategory);
-        } else {
-          categories = ['Jingle', 'Placa Pirulito', 'Praginha'];
-          currentCategory = categories[0];
-          renderNavTabs();
-          loadCategoryContent(currentCategory);
-        }
-      } catch (error) {
-        console.error('Erro ao carregar categorias:', error);
-        categories = ['Jingle', 'Placa Pirulito', 'Praginha'];
-        currentCategory = categories[0];
-        renderNavTabs();
-        loadCategoryContent(currentCategory);
-      }
-    }
+            <div class="admin-section">
+                <h3>Adicionar Arquivo ao Portfólio</h3>
+                <input type="text" id="item-title" placeholder="Título do Trabalho">
+                
+                <select id="item-category">
+                    <!-- Opções injetadas via JS -->
+                </select>
 
-    function renderNavTabs() {
-      const navTabs = document.getElementById('navTabs');
-      navTabs.innerHTML = categories.map(cat => 
-        `<div class="nav-tab ${cat === currentCategory ? 'active' : ''}" 
-             onclick="changeCategory('${cat}', this)">${cat}</div>`
-      ).join('');
-    }
+                <select id="item-type">
+                    <option value="imagem">Imagem</option>
+                    <option value="video">Vídeo</option>
+                    <option value="audio">Áudio</option>
+                </select>
 
-    function changeCategory(category, element) {
-      currentCategory = category;
-      
-      if (currentAudio) {
-        currentAudio.pause();
-        currentAudio = null;
-      }
-      
-      document.querySelectorAll('.nav-tab').forEach(tab => tab.classList.remove('active'));
-      element.classList.add('active');
-      
-      loadCategoryContent(category);
-    }
-
-    async function loadCategoryContent(category) {
-      const grid = document.getElementById('contentGrid');
-      grid.innerHTML = `
-        <div class="loading">
-          <div class="loading-spinner"></div>
-          <p>Carregando ${category}...</p>
+                <input type="file" id="item-file" accept="image/*,video/*,audio/*">
+                
+                <button onclick="addItem()" id="btn-add-item">Fazer Upload e Salvar</button>
+            </div>
         </div>
-      `;
-      
-      try {
-        const response = await fetch(`${API_URL}?action=list&category=${encodeURIComponent(category)}`);
-        
-        if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
-        
-        const data = await response.json();
-        if (data.error) throw new Error(data.error);
-        
-        if (!data.files || data.files.length === 0) {
-          grid.innerHTML = `
-            <div class="empty-state">
-              <div style="font-size: 4em; margin-bottom: 20px;">📂</div>
-              <p>Nenhum arquivo em ${category}</p>
-            </div>
-          `;
-          return;
+    </div>
+
+    <script>
+        // COLOQUE A URL DO SEU GOOGLE APPS SCRIPT AQUI =======================
+        const WEB_APP_URL = "https://script.google.com/macros/s/AKfycbzWzIg8eyb9LMx82AD25XB9E9ypBcMFMpITZ-zOKWFKf7P2ywAnqqAypZQoIOxngclH4w/exec"; 
+        // ====================================================================
+
+        let allItems = [];
+        let currentCategory = 'Todas';
+
+        async function carregarDados() {
+            try {
+                const response = await fetch(WEB_APP_URL);
+                const data = await response.json();
+                
+                allItems = data.itens;
+                renderCategories(data.categorias);
+                renderItems();
+            } catch (error) {
+                document.getElementById('portfolio-grid').innerHTML = "<p>Erro ao carregar dados.</p>";
+            }
         }
-        
-        renderFiles(data.files);
-        
-      } catch (error) {
-        console.error('Erro:', error);
-        grid.innerHTML = `
-          <div class="error-state">
-            <p>Erro ao carregar conteúdo</p>
-            <p style="font-size: 0.9em;">${error.message}</p>
-            <button onclick="loadCategoryContent('${category}')" 
-                    style="margin-top: 20px; padding: 10px 20px; background: white; color: #2d5016; 
-                           border: none; border-radius: 20px; cursor: pointer; font-weight: 600;">
-              Tentar novamente
-            </button>
-          </div>
-        `;
-      }
-    }
 
-    function renderFiles(files) {
-      const grid = document.getElementById('contentGrid');
-      grid.innerHTML = '';
-      
-      files.forEach((file, index) => {
-        const card = document.createElement('div');
-        card.className = 'media-card';
-        card.style.animationDelay = `${index * 0.1}s`;
-        
-        let previewHTML = '';
-        
-        if (file.tipo === 'imagem') {
-          previewHTML = `
-            <div class="media-preview">
-              <img src="${file.url}" alt="${file.titulo}" 
-                   onerror="this.src='data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 width=%22200%22 height=%22200%22><rect fill=%22%23ddd%22 width=%22200%22 height=%22200%22/><text fill=%22%23999%22 x=%2250%25%22 y=%2250%25%22 text-anchor=%22middle%22 dy=%22.3em%22>Erro</text></svg>'">
-            </div>
-          `;
-        } else if (file.tipo === 'video') {
-          previewHTML = `
-            <div class="media-preview">
-              <video muted loop controls>
-                <source src="${file.url}" type="video/mp4">
-              </video>
-            </div>
-          `;
-        } else if (file.tipo === 'audio') {
-          previewHTML = `
-            <div class="spotify-player" onclick="event.stopPropagation();">
-              <div class="spotify-content">
-                <div class="spotify-art paused" id="art_${file.id}">🎵</div>
-                <div class="spotify-info">
-                  <div class="spotify-title">${file.titulo || 'Áudio'}</div>
-                </div>
-                <div class="spotify-controls">
-                  <button class="spotify-btn" onclick="event.stopPropagation(); skipAudio('${file.id}', -10)">
-                    <i class="fas fa-backward"></i>
-                  </button>
-                  <button class="spotify-btn play-btn" onclick="event.stopPropagation(); toggleAudio('${file.id}', '${file.url}')" id="playBtn_${file.id}">
-                    <i class="fas fa-play"></i>
-                  </button>
-                  <button class="spotify-btn" onclick="event.stopPropagation(); skipAudio('${file.id}', 10)">
-                    <i class="fas fa-forward"></i>
-                  </button>
-                </div>
-                <div class="spotify-progress" onclick="event.stopPropagation(); seekAudio(event, '${file.id}')">
-                  <div class="spotify-progress-bar" id="progress_${file.id}"></div>
-                </div>
-                <div class="spotify-time">
-                  <span id="currentTime_${file.id}">0:00</span>
-                  <span id="duration_${file.id}">0:00</span>
-                </div>
-              </div>
-              <audio id="audio_${file.id}" src="${file.url}" preload="metadata"></audio>
-            </div>
-          `;
+        function renderCategories(categorias) {
+            const container = document.getElementById('category-container');
+            const select = document.getElementById('item-category');
+            
+            container.innerHTML = `<button class="cat-btn active" onclick="filterCategory('Todas', this)">Todas</button>`;
+            select.innerHTML = '';
+
+            categorias.forEach(cat => {
+                container.innerHTML += `<button class="cat-btn" onclick="filterCategory('${cat}', this)">${cat}</button>`;
+                select.innerHTML += `<option value="${cat}">${cat}</option>`;
+            });
         }
-        
-        card.innerHTML = `
-          ${previewHTML}
-          <div class="media-info">
-            <div class="media-title">${file.titulo || 'Sem título'}</div>
-            <span class="media-type">${file.tipo}</span>
-            <div class="media-date">📅 ${file.data || 'Data não disponível'}</div>
-          </div>
-        `;
-        
-        grid.appendChild(card);
-        
-        if (file.tipo === 'audio') {
-          setupAudioPlayer(file.id);
+
+        function filterCategory(cat, btnElement) {
+            currentCategory = cat;
+            document.querySelectorAll('.cat-btn').forEach(btn => btn.classList.remove('active'));
+            btnElement.classList.add('active');
+            renderItems();
         }
-      });
-    }
 
-    function setupAudioPlayer(id) {
-      const audio = document.getElementById(`audio_${id}`);
-      if (!audio) return;
-      
-      audio.addEventListener('loadedmetadata', () => {
-        document.getElementById(`duration_${id}`).textContent = formatTime(audio.duration);
-      });
-      
-      audio.addEventListener('timeupdate', () => {
-        const progress = (audio.currentTime / audio.duration) * 100;
-        const progressBar = document.getElementById(`progress_${id}`);
-        const currentTime = document.getElementById(`currentTime_${id}`);
-        if (progressBar) progressBar.style.width = progress + '%';
-        if (currentTime) currentTime.textContent = formatTime(audio.currentTime);
-      });
-      
-      audio.addEventListener('ended', () => {
-        document.getElementById(`playBtn_${id}`).innerHTML = '<i class="fas fa-play"></i>';
-        document.getElementById(`art_${id}`).classList.remove('playing');
-        document.getElementById(`art_${id}`).classList.add('paused');
-        currentAudio = null;
-      });
-    }
+        function renderItems() {
+            const grid = document.getElementById('portfolio-grid');
+            grid.innerHTML = '';
 
-    function toggleAudio(id, url) {
-      const audio = document.getElementById(`audio_${id}`);
-      const playBtn = document.getElementById(`playBtn_${id}`);
-      const art = document.getElementById(`art_${id}`);
-      
-      if (!audio) return;
-      
-      if (currentAudio && currentAudio !== audio) {
-        const prevId = currentAudio.id.replace('audio_', '');
-        const prevBtn = document.getElementById(`playBtn_${prevId}`);
-        const prevArt = document.getElementById(`art_${prevId}`);
-        if (prevBtn) prevBtn.innerHTML = '<i class="fas fa-play"></i>';
-        if (prevArt) {
-          prevArt.classList.remove('playing');
-          prevArt.classList.add('paused');
+            const filtrados = currentCategory === 'Todas' 
+                ? allItems 
+                : allItems.filter(item => item.categoria === currentCategory);
+
+            if (filtrados.length === 0) {
+                grid.innerHTML = "<p style='text-align:center; width:100%;'>Nenhum item nesta categoria.</p>";
+                return;
+            }
+
+            filtrados.forEach(item => {
+                let mediaHtml = '';
+                if (item.tipo === 'imagem') mediaHtml = `<img src="${item.url}" alt="${item.titulo}">`;
+                if (item.tipo === 'video') mediaHtml = `<video src="${item.url}" controls></video>`;
+                if (item.tipo === 'audio') mediaHtml = `<audio src="${item.url}" controls></audio>`;
+
+                grid.innerHTML += `
+                    <div class="glass portfolio-card">
+                        <div class="media-container">${mediaHtml}</div>
+                        <h3>${item.titulo}</h3>
+                    </div>
+                `;
+            });
         }
-        currentAudio.pause();
-      }
-      
-      if (audio.paused) {
-        audio.play();
-        playBtn.innerHTML = '<i class="fas fa-pause"></i>';
-        art.classList.remove('paused');
-        art.classList.add('playing');
-        currentAudio = audio;
-      } else {
-        audio.pause();
-        playBtn.innerHTML = '<i class="fas fa-play"></i>';
-        art.classList.remove('playing');
-        art.classList.add('paused');
-        currentAudio = null;
-      }
-    }
 
-    function skipAudio(id, seconds) {
-      const audio = document.getElementById(`audio_${id}`);
-      if (audio) {
-        audio.currentTime = Math.max(0, Math.min(audio.duration, audio.currentTime + seconds));
-      }
-    }
+        function toggleAdmin() {
+            const modal = document.getElementById('admin-modal');
+            modal.style.display = modal.style.display === 'flex' ? 'none' : 'flex';
+        }
 
-    function seekAudio(event, id) {
-      const audio = document.getElementById(`audio_${id}`);
-      const progressBar = event.currentTarget;
-      const rect = progressBar.getBoundingClientRect();
-      const percent = (event.clientX - rect.left) / rect.width;
-      
-      if (audio) {
-        audio.currentTime = percent * audio.duration;
-      }
-    }
+        async function addCategory() {
+            const nome = document.getElementById('new-category-name').value;
+            if (!nome) return alert('Digite um nome!');
+            
+            const btn = event.target;
+            btn.innerText = 'Salvando...';
 
-    function formatTime(seconds) {
-      if (isNaN(seconds)) return '0:00';
-      const mins = Math.floor(seconds / 60);
-      const secs = Math.floor(seconds % 60);
-      return `${mins}:${secs.toString().padStart(2, '0')}`;
-    }
+            await fetch(WEB_APP_URL, {
+                method: 'POST',
+                body: JSON.stringify({ action: 'addCategoria', nome: nome })
+            });
 
-    function closeModal() {
-      document.getElementById('mediaModal').style.display = 'none';
-      document.body.style.overflow = 'auto';
-    }
+            document.getElementById('new-category-name').value = '';
+            btn.innerText = 'Adicionar Categoria';
+            carregarDados();
+        }
 
-    document.addEventListener('keydown', (e) => {
-      if (e.key === 'Escape') closeModal();
-    });
-  </script>
+        async function addItem() {
+            const titulo = document.getElementById('item-title').value;
+            const categoria = document.getElementById('item-category').value;
+            const tipo = document.getElementById('item-type').value;
+            const fileInput = document.getElementById('item-file');
+            const btn = document.getElementById('btn-add-item');
+
+            if (!titulo || !fileInput.files[0]) return alert('Preencha título e selecione o arquivo.');
+
+            const file = fileInput.files[0];
+            const reader = new FileReader();
+
+            btn.innerText = 'Fazendo Upload... Aguarde';
+            btn.disabled = true;
+
+            reader.onload = async function() {
+                const base64Str = reader.result.split(',')[1];
+                
+                await fetch(WEB_APP_URL, {
+                    method: 'POST',
+                    body: JSON.stringify({
+                        action: 'addItem',
+                        titulo: titulo,
+                        categoria: categoria,
+                        tipo: tipo,
+                        filename: file.name,
+                        mimeType: file.type,
+                        base64: base64Str
+                    })
+                });
+
+                document.getElementById('item-title').value = '';
+                fileInput.value = '';
+                btn.innerText = 'Fazer Upload e Salvar';
+                btn.disabled = false;
+                toggleAdmin();
+                carregarDados();
+            };
+
+            reader.readAsDataURL(file);
+        }
+
+        // Inicia carregamento
+        carregarDados();
+    </script>
 </body>
 </html>
