@@ -362,23 +362,20 @@
             filtrados.forEach(item => {
                 let mediaHtml = '';
                 
+                // Montando a URL dinamicamente no frontend com o idDrive
+                const fileUrl = `https://drive.google.com/uc?id=${item.idDrive}`;
+                
                 if (item.tipo === 'imagem') {
-                    mediaHtml = `<div class="media-container"><img src="${item.url}" alt="${item.titulo}" loading="lazy"></div>`;
+                    mediaHtml = `<div class="media-container"><img src="${fileUrl}" alt="${item.titulo}" loading="lazy"></div>`;
                 } 
                 else if (item.tipo === 'video') {
-                    mediaHtml = `<div class="media-container"><video src="${item.url}" controls preload="metadata"></video></div>`;
+                    mediaHtml = `<div class="media-container"><video src="${fileUrl}" controls preload="metadata"></video></div>`;
                 } 
                 else if (item.tipo === 'audio') {
-                    // SOLUÇÃO DO ÁUDIO: Adicionando sub-tags 'source' para forçar a leitura correta pelo navegador
                     mediaHtml = `
                     <div class="audio-wrapper">
                         <div class="audio-icon">🎵</div>
-                        <audio controls preload="auto">
-                            <source src="${item.url}" type="audio/mpeg">
-                            <source src="${item.url}" type="audio/wav">
-                            <source src="${item.url}" type="audio/ogg">
-                            Seu navegador não suporta a tag de áudio.
-                        </audio>
+                        <audio controls preload="metadata" src="${fileUrl}"></audio>
                     </div>`;
                 }
 
