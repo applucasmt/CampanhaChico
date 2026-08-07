@@ -11,13 +11,11 @@
             --glass-bg: rgba(255, 255, 255, 0.1);
             --glass-border: rgba(255, 255, 255, 0.2);
             --apple-font: -apple-system, BlinkMacSystemFont, "SF Pro Text", "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+            --spotify-dark: #181818;
+            --spotify-card: #282828;
         }
 
-        * {
-            box-sizing: border-box;
-            margin: 0;
-            padding: 0;
-        }
+        * { box-sizing: border-box; margin: 0; padding: 0; }
 
         body {
             font-family: var(--apple-font);
@@ -28,6 +26,7 @@
             display: flex;
             flex-direction: column;
             -webkit-font-smoothing: antialiased;
+            padding-bottom: 100px; /* Espaço para o player global */
         }
 
         .glass-panel {
@@ -39,225 +38,66 @@
             box-shadow: 0 10px 40px rgba(0, 0, 0, 0.15);
         }
 
-        header {
-            text-align: center;
-            padding: 50px 20px 30px;
-        }
+        header { text-align: center; padding: 50px 20px 30px; }
+        header h1 { font-weight: 700; font-size: 2.8rem; letter-spacing: -1.2px; margin-bottom: 10px; text-shadow: 0 4px 15px rgba(0,0,0,0.2); }
 
-        header h1 {
-            font-weight: 700;
-            font-size: 2.8rem;
-            letter-spacing: -1.2px;
-            margin-bottom: 10px;
-            text-shadow: 0 4px 15px rgba(0,0,0,0.2);
-        }
+        .tabs-wrapper { display: flex; justify-content: center; padding: 0 20px; margin-bottom: 40px; }
+        .tabs-container { display: flex; background: rgba(0, 0, 0, 0.25); padding: 6px; border-radius: 16px; backdrop-filter: blur(15px); overflow-x: auto; max-width: 100%; scrollbar-width: none; }
+        .tabs-container::-webkit-scrollbar { display: none; }
+        .tab-btn { background: transparent; border: none; color: rgba(255, 255, 255, 0.7); padding: 10px 24px; border-radius: 12px; cursor: pointer; font-size: 1rem; font-weight: 500; transition: all 0.3s ease; white-space: nowrap; }
+        .tab-btn:hover { color: #fff; }
+        .tab-btn.active { background: var(--verde-limao); color: var(--verde-militar); box-shadow: 0 4px 12px rgba(0,0,0,0.2); font-weight: 600; }
 
-        .tabs-wrapper {
-            display: flex;
-            justify-content: center;
-            padding: 0 20px;
-            margin-bottom: 40px;
-        }
+        .portfolio-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 25px; padding: 0 20px 40px; max-width: 1200px; margin: 0 auto; flex: 1; width: 100%; }
 
-        .tabs-container {
-            display: flex;
-            background: rgba(0, 0, 0, 0.25);
-            padding: 6px;
-            border-radius: 16px;
-            backdrop-filter: blur(15px);
-            -webkit-backdrop-filter: blur(15px);
-            overflow-x: auto;
-            max-width: 100%;
-            scrollbar-width: none; 
-        }
-        
-        .tabs-container::-webkit-scrollbar {
-            display: none; 
-        }
+        /* Estilo Geral de Cards */
+        .portfolio-card { padding: 16px; display: flex; flex-direction: column; gap: 16px; transition: transform 0.4s ease, box-shadow 0.4s ease; cursor: pointer; }
+        .portfolio-card:hover { transform: translateY(-8px); box-shadow: 0 15px 35px rgba(0,0,0,0.25); }
+        .portfolio-card h3 { font-size: 1.1rem; font-weight: 600; color: #fff; margin-bottom: 4px; }
+        .portfolio-card p { font-size: 0.9rem; color: rgba(255,255,255,0.7); display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; }
 
-        .tab-btn {
-            background: transparent;
-            border: none;
-            color: rgba(255, 255, 255, 0.7);
-            padding: 10px 24px;
-            border-radius: 12px;
-            cursor: pointer;
-            font-size: 1rem;
-            font-weight: 500;
-            transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
-            white-space: nowrap;
-        }
+        .media-container { width: 100%; border-radius: 12px; overflow: hidden; background: rgba(0,0,0,0.3); display: flex; justify-content: center; align-items: center; aspect-ratio: 16/9; }
+        .media-container img, .media-container video { width: 100%; height: 100%; object-fit: cover; }
 
-        .tab-btn:hover {
-            color: #fff;
-        }
+        /* Estilo Áudio Spotify Card */
+        .audio-card { background: rgba(0,0,0,0.4); border-radius: 16px; position: relative; }
+        .audio-cover-wrapper { width: 100%; aspect-ratio: 1/1; border-radius: 12px; overflow: hidden; position: relative; margin-bottom: 15px; box-shadow: 0 8px 24px rgba(0,0,0,0.4); }
+        .audio-cover-wrapper img { width: 100%; height: 100%; object-fit: cover; transition: transform 0.3s; }
+        .audio-card:hover .audio-cover-wrapper img { transform: scale(1.05); }
+        .play-btn-overlay { position: absolute; bottom: 10px; right: 10px; background: var(--verde-limao); color: var(--verde-militar); width: 45px; height: 45px; border-radius: 50%; display: flex; justify-content: center; align-items: center; font-size: 1.5rem; opacity: 0; transform: translateY(10px); transition: all 0.3s; box-shadow: 0 8px 16px rgba(0,0,0,0.3); padding-left: 4px; }
+        .audio-card:hover .play-btn-overlay { opacity: 1; transform: translateY(0); }
 
-        .tab-btn.active {
-            background: var(--verde-limao);
-            color: var(--verde-militar);
-            box-shadow: 0 4px 12px rgba(0,0,0,0.2);
-            font-weight: 600;
-        }
+        /* Player Global (Rodapé Flutuante) */
+        .global-player { position: fixed; bottom: 20px; left: 50%; transform: translateX(-50%) translateY(150%); width: 95%; max-width: 900px; background: rgba(20, 20, 20, 0.95); backdrop-filter: blur(20px); border: 1px solid rgba(255,255,255,0.1); border-radius: 100px; display: flex; align-items: center; justify-content: space-between; padding: 10px 20px 10px 10px; z-index: 9999; box-shadow: 0 20px 40px rgba(0,0,0,0.5); transition: transform 0.5s cubic-bezier(0.25, 0.8, 0.25, 1); }
+        .global-player.active { transform: translateX(-50%) translateY(0); }
+        .track-info { display: flex; align-items: center; gap: 15px; width: 30%; min-width: 150px; }
+        .track-info img { width: 60px; height: 60px; border-radius: 50%; object-fit: cover; box-shadow: 0 4px 10px rgba(0,0,0,0.3); }
+        .track-text { display: flex; flex-direction: column; overflow: hidden; white-space: nowrap; }
+        .track-text h4 { font-size: 1rem; margin: 0; color: #fff; text-overflow: ellipsis; overflow: hidden; }
+        .track-text p { font-size: 0.8rem; margin: 0; color: #aaa; text-overflow: ellipsis; overflow: hidden; }
+        .track-controls { width: 60%; display: flex; justify-content: center; }
+        .track-controls audio { width: 100%; max-width: 500px; height: 40px; outline: none; }
+        .close-player { background: none; border: none; color: #aaa; font-size: 1.5rem; cursor: pointer; padding: 0 10px; transition: color 0.3s; }
+        .close-player:hover { color: #fff; }
 
-        .portfolio-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
-            gap: 25px;
-            padding: 0 20px 40px;
-            max-width: 1200px;
-            margin: 0 auto;
-            flex: 1;
-            width: 100%;
-        }
-
-        .portfolio-card {
-            padding: 16px;
-            display: flex;
-            flex-direction: column;
-            gap: 16px;
-            transition: transform 0.4s ease, box-shadow 0.4s ease;
-        }
-
-        .portfolio-card:hover {
-            transform: translateY(-8px);
-            box-shadow: 0 15px 35px rgba(0,0,0,0.25);
-        }
-
-        .portfolio-card h3 {
-            font-size: 1.1rem;
-            font-weight: 600;
-            text-align: center;
-            color: #f1f1f1;
-        }
-
-        .media-container {
-            width: 100%;
-            border-radius: 12px;
-            overflow: hidden;
-            background: rgba(0,0,0,0.3);
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            aspect-ratio: 16/9; 
-        }
-
-        .media-container img, .media-container video {
-            width: 100%;
-            height: 100%;
-            object-fit: cover;
-        }
-
-        .audio-wrapper {
-            width: 100%;
-            padding: 20px;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-            background: rgba(255,255,255,0.05);
-            border-radius: 12px;
-        }
-
-        .audio-wrapper audio {
-            width: 100%;
-            outline: none;
-        }
-
-        .audio-icon {
-            font-size: 3rem;
-            margin-bottom: 10px;
-            opacity: 0.8;
-        }
-
-        footer {
-            text-align: center;
-            padding: 20px;
-            margin-top: auto;
-        }
-
-        .admin-icon {
-            cursor: pointer;
-            font-size: 1.5rem;
-            opacity: 0.5;
-            transition: opacity 0.3s;
-        }
-
+        footer { text-align: center; padding: 20px; margin-top: auto; }
+        .admin-icon { cursor: pointer; font-size: 1.5rem; opacity: 0.5; transition: opacity 0.3s; }
         .admin-icon:hover { opacity: 1; }
 
-        .admin-modal {
-            position: fixed;
-            top: 0; left: 0; width: 100%; height: 100%;
-            background: rgba(0,0,0,0.7);
-            display: none;
-            justify-content: center;
-            align-items: center;
-            z-index: 1000;
-            backdrop-filter: blur(10px);
-        }
-
-        .admin-content {
-            padding: 35px;
-            width: 90%;
-            max-width: 450px;
-            position: relative;
-        }
-
-        .close-admin {
-            position: absolute;
-            top: 20px; right: 25px;
-            cursor: pointer;
-            font-weight: 600;
-            font-size: 1.2rem;
-            color: rgba(255,255,255,0.6);
-        }
-
+        /* Admin Modal */
+        .admin-modal { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.7); display: none; justify-content: center; align-items: center; z-index: 10000; backdrop-filter: blur(10px); }
+        .admin-content { padding: 35px; width: 90%; max-width: 450px; position: relative; max-height: 90vh; overflow-y: auto; }
+        .close-admin { position: absolute; top: 20px; right: 25px; cursor: pointer; font-weight: 600; font-size: 1.2rem; color: rgba(255,255,255,0.6); }
         .close-admin:hover { color: #fff; }
-
-        .admin-section {
-            margin-bottom: 25px;
-        }
-
-        .admin-section h3 {
-            font-size: 1rem;
-            margin-bottom: 10px;
-            font-weight: 500;
-            color: var(--verde-limao);
-        }
-
-        input, select, button {
-            width: 100%;
-            padding: 14px;
-            margin-bottom: 12px;
-            border-radius: 12px;
-            border: none;
-            font-family: inherit;
-            font-size: 1rem;
-            outline: none;
-        }
-
-        input, select {
-            background: rgba(255,255,255,0.9);
-            color: #333;
-        }
-
-        button {
-            background: var(--verde-limao);
-            color: var(--verde-militar);
-            font-weight: 700;
-            cursor: pointer;
-            transition: opacity 0.3s;
-        }
-
+        .admin-section { margin-bottom: 25px; }
+        .admin-section h3 { font-size: 1rem; margin-bottom: 10px; font-weight: 500; color: var(--verde-limao); }
+        input, select, button, textarea { width: 100%; padding: 14px; margin-bottom: 12px; border-radius: 12px; border: none; font-family: inherit; font-size: 1rem; outline: none; }
+        input, select, textarea { background: rgba(255,255,255,0.9); color: #333; resize: vertical; }
+        button { background: var(--verde-limao); color: var(--verde-militar); font-weight: 700; cursor: pointer; transition: opacity 0.3s; }
         button:hover { opacity: 0.9; }
         button:disabled { opacity: 0.5; cursor: not-allowed; }
-
-        .loading {
-            text-align: center;
-            padding: 50px;
-            font-size: 1.2rem;
-            font-weight: 500;
-            grid-column: 1 / -1;
-        }
+        .loading { text-align: center; padding: 50px; font-size: 1.2rem; font-weight: 500; grid-column: 1 / -1; }
+        .helper-text { font-size: 0.85rem; color: #ccc; margin-bottom: 8px; display: block; }
     </style>
 </head>
 <body>
@@ -267,21 +107,35 @@
     </header>
 
     <div class="tabs-wrapper">
-        <div class="tabs-container" id="category-container">
-        </div>
+        <div class="tabs-container" id="category-container"></div>
     </div>
 
     <div class="portfolio-grid" id="portfolio-grid">
         <div class="loading">Sincronizando arquivos...</div>
     </div>
 
+    <!-- Player Global Estilo Spotify -->
+    <div class="global-player" id="global-player">
+        <div class="track-info">
+            <img id="player-cover" src="" alt="Capa">
+            <div class="track-text">
+                <h4 id="player-title">Título da Música</h4>
+                <p id="player-desc">Descrição breve</p>
+            </div>
+        </div>
+        <div class="track-controls">
+            <audio id="main-audio" controls controlsList="nodownload"></audio>
+        </div>
+        <button class="close-player" onclick="closePlayer()">✕</button>
+    </div>
+
     <footer>
-        <span class="admin-icon" onclick="toggleAdmin()">🔒</span>
+        <span class="admin-icon" onclick="checkPassword()">🔒</span>
     </footer>
 
     <div class="admin-modal" id="admin-modal">
         <div class="glass-panel admin-content">
-            <span class="close-admin" onclick="toggleAdmin()">✕</span>
+            <span class="close-admin" onclick="closeAdmin()">✕</span>
             <h2 style="margin-bottom: 20px; text-align: center;">Acesso Restrito</h2>
 
             <div class="admin-section">
@@ -292,14 +146,24 @@
 
             <div class="admin-section">
                 <h3>2. Enviar Arquivo</h3>
-                <input type="text" id="item-title" placeholder="Nome do Projeto">
-                <select id="item-category"></select>
-                <select id="item-type">
+                <select id="item-type" onchange="toggleAudioFields()">
                     <option value="imagem">Imagem</option>
                     <option value="video">Vídeo</option>
-                    <option value="audio">Áudio</option>
+                    <option value="audio">Áudio (Estilo Spotify)</option>
                 </select>
+                <select id="item-category"></select>
+                <input type="text" id="item-title" placeholder="Nome do Projeto">
+                <textarea id="item-desc" placeholder="Descrição do Projeto (Opcional)" rows="2"></textarea>
+                
+                <!-- Extra para Áudio -->
+                <div id="audio-extras" style="display: none; background: rgba(0,0,0,0.2); padding: 15px; border-radius: 12px; margin-bottom: 12px;">
+                    <span class="helper-text">Capa do Áudio (Imagem Quadrada)</span>
+                    <input type="file" id="item-cover" accept="image/*">
+                </div>
+
+                <span class="helper-text">Arquivo Principal (Imagem, Vídeo ou Áudio)</span>
                 <input type="file" id="item-file" accept="image/*,video/*,audio/*">
+                
                 <button onclick="addItem()" id="btn-add-item">Fazer Upload</button>
             </div>
         </div>
@@ -307,10 +171,10 @@
 
     <script>
         // ====================================================================
-        // 1. DADOS DO GOOGLE APPS SCRIPT
-        const WEB_APP_URL = "https://script.google.com/macros/s/AKfycbzWzIg8eyb9LMx82AD25XB9E9ypBcMFMpITZ-zOKWFKf7P2ywAnqqAypZQoIOxngclH4w/exec"; 
+        // COLOQUE A SUA NOVA URL DO WEB APP AQUI!
+        const WEB_APP_URL = "SUA_URL_DO_WEB_APP_AQUI"; 
         
-        // 2. DADOS DO CLOUDINARY
+        // DADOS DO CLOUDINARY
         const CLOUDINARY_CLOUD_NAME = "gyzeubzm"; 
         const CLOUDINARY_UPLOAD_PRESET = "ml_default"; 
         // ====================================================================
@@ -322,7 +186,6 @@
             try {
                 const response = await fetch(WEB_APP_URL);
                 const data = await response.json();
-                
                 allItems = data.itens.reverse(); 
                 renderCategories(data.categorias);
                 renderItems();
@@ -337,7 +200,6 @@
             
             container.innerHTML = `<button class="tab-btn active" onclick="filterCategory('Todas', this)">Todas</button>`;
             select.innerHTML = '';
-
             categorias.forEach(cat => {
                 container.innerHTML += `<button class="tab-btn" onclick="filterCategory('${cat}', this)">${cat}</button>`;
                 select.innerHTML += `<option value="${cat}">${cat}</option>`;
@@ -354,10 +216,7 @@
         function renderItems() {
             const grid = document.getElementById('portfolio-grid');
             grid.innerHTML = '';
-
-            const filtrados = currentCategory === 'Todas' 
-                ? allItems 
-                : allItems.filter(item => item.categoria === currentCategory);
+            const filtrados = currentCategory === 'Todas' ? allItems : allItems.filter(item => item.categoria === currentCategory);
 
             if (filtrados.length === 0) {
                 grid.innerHTML = "<div class='loading'>Nenhum trabalho nesta aba ainda.</div>";
@@ -365,35 +224,90 @@
             }
 
             filtrados.forEach(item => {
-                let mediaHtml = '';
+                let cardHtml = '';
                 
-                // O link vem direto do Cloudinary, super limpo e rápido!
-                if (item.tipo === 'imagem') {
-                    mediaHtml = `<div class="media-container"><img src="${item.url}" alt="${item.titulo}" loading="lazy"></div>`;
-                } 
-                else if (item.tipo === 'video') {
-                    mediaHtml = `<div class="media-container"><video src="${item.url}" controls preload="metadata"></video></div>`;
+                if (item.tipo === 'imagem' || item.tipo === 'video') {
+                    let mediaHtml = item.tipo === 'imagem' 
+                        ? `<img src="${item.url}" alt="${item.titulo}" loading="lazy">`
+                        : `<video src="${item.url}" controls preload="metadata"></video>`;
+                    
+                    cardHtml = `
+                        <div class="glass-panel portfolio-card">
+                            <div class="media-container">${mediaHtml}</div>
+                            <div>
+                                <h3>${item.titulo}</h3>
+                                ${item.descricao ? `<p>${item.descricao}</p>` : ''}
+                            </div>
+                        </div>`;
                 } 
                 else if (item.tipo === 'audio') {
-                    mediaHtml = `
-                    <div class="audio-wrapper">
-                        <div class="audio-icon">🎵</div>
-                        <audio controls preload="metadata" src="${item.url}"></audio>
-                    </div>`;
+                    // Capa padrão caso o usuário não envie nenhuma
+                    const defaultCover = `https://ui-avatars.com/api/?name=%E2%99%AB&background=d4ff33&color=4B5320&size=256&font-size=0.5`;
+                    const coverImg = item.capa ? item.capa : defaultCover;
+                    
+                    // Escapando aspas para não quebrar o clique
+                    const safeTitle = item.titulo.replace(/'/g, "\\'");
+                    const safeDesc = item.descricao ? item.descricao.replace(/'/g, "\\'") : '';
+                    
+                    cardHtml = `
+                        <div class="glass-panel portfolio-card audio-card" onclick="openSpotifyPlayer('${item.url}', '${safeTitle}', '${safeDesc}', '${coverImg}')">
+                            <div class="audio-cover-wrapper">
+                                <img src="${coverImg}" alt="${item.titulo}" loading="lazy">
+                                <div class="play-btn-overlay">▶</div>
+                            </div>
+                            <div>
+                                <h3>${item.titulo}</h3>
+                                ${item.descricao ? `<p>${item.descricao}</p>` : ''}
+                            </div>
+                        </div>`;
                 }
 
-                grid.innerHTML += `
-                    <div class="glass-panel portfolio-card">
-                        ${mediaHtml}
-                        <h3>${item.titulo}</h3>
-                    </div>
-                `;
+                grid.innerHTML += cardHtml;
             });
         }
 
-        function toggleAdmin() {
-            const modal = document.getElementById('admin-modal');
-            modal.style.display = modal.style.display === 'flex' ? 'none' : 'flex';
+        // ==========================================
+        // PLAYER GLOBAL TIPO SPOTIFY
+        // ==========================================
+        function openSpotifyPlayer(url, title, desc, coverUrl) {
+            const player = document.getElementById('global-player');
+            const audioEl = document.getElementById('main-audio');
+            
+            document.getElementById('player-cover').src = coverUrl;
+            document.getElementById('player-title').innerText = title;
+            document.getElementById('player-desc').innerText = desc || 'Áudio Exclusivo';
+            
+            audioEl.src = url;
+            player.classList.add('active');
+            audioEl.play();
+        }
+
+        function closePlayer() {
+            const player = document.getElementById('global-player');
+            const audioEl = document.getElementById('main-audio');
+            player.classList.remove('active');
+            audioEl.pause();
+        }
+
+        // ==========================================
+        // PAINEL ADMINISTRATIVO E SENHA
+        // ==========================================
+        function checkPassword() {
+            const pass = prompt("Digite a senha do Administrador:");
+            if (pass === "Gabinete247") {
+                document.getElementById('admin-modal').style.display = 'flex';
+            } else if (pass !== null) {
+                alert("Senha Incorreta!");
+            }
+        }
+
+        function closeAdmin() {
+            document.getElementById('admin-modal').style.display = 'none';
+        }
+
+        function toggleAudioFields() {
+            const type = document.getElementById('item-type').value;
+            document.getElementById('audio-extras').style.display = type === 'audio' ? 'block' : 'none';
         }
 
         async function addCategory() {
@@ -415,57 +329,64 @@
             carregarDados();
         }
 
+        async function uploadToCloudinary(file) {
+            const formData = new FormData();
+            formData.append('file', file);
+            formData.append('upload_preset', CLOUDINARY_UPLOAD_PRESET);
+            const response = await fetch(`https://api.cloudinary.com/v1_1/${CLOUDINARY_CLOUD_NAME}/auto/upload`, { method: 'POST', body: formData });
+            const data = await response.json();
+            return data.secure_url;
+        }
+
         async function addItem() {
             const titulo = document.getElementById('item-title').value;
+            const desc = document.getElementById('item-desc').value;
             const categoria = document.getElementById('item-category').value;
             const tipo = document.getElementById('item-type').value;
             const fileInput = document.getElementById('item-file');
+            const coverInput = document.getElementById('item-cover');
             const btn = document.getElementById('btn-add-item');
 
-            if (!titulo || !fileInput.files[0]) return alert('Preencha o título e selecione um arquivo.');
+            if (!titulo || !fileInput.files[0]) return alert('Obrigatório: Título e Arquivo Principal.');
 
-            const file = fileInput.files[0];
-            btn.innerText = 'Enviando para Nuvem...';
             btn.disabled = true;
 
             try {
-                // 1. Enviar arquivo para o Cloudinary primeiro
-                const formData = new FormData();
-                formData.append('file', file);
-                formData.append('upload_preset', CLOUDINARY_UPLOAD_PRESET);
-
-                // O endpoint 'auto' reconhece sozinho se é imagem, vídeo ou áudio (raw)
-                const cloudinaryResponse = await fetch(`https://api.cloudinary.com/v1_1/${CLOUDINARY_CLOUD_NAME}/auto/upload`, {
-                    method: 'POST',
-                    body: formData
-                });
-                
-                const cloudinaryData = await cloudinaryResponse.json();
-
-                if (!cloudinaryData.secure_url) {
-                    throw new Error("Erro no upload do Cloudinary. Verifique o Upload Preset.");
+                let capaUrl = "";
+                // Se for áudio e tiver enviado capa, faz upload da capa primeiro
+                if (tipo === 'audio' && coverInput.files[0]) {
+                    btn.innerText = '1/2: Enviando Capa...';
+                    capaUrl = await uploadToCloudinary(coverInput.files[0]);
                 }
 
-                const fileUrl = cloudinaryData.secure_url;
+                // Upload do arquivo principal (Video, Audio ou Imagem)
+                btn.innerText = (tipo === 'audio' && coverInput.files[0]) ? '2/2: Enviando Arquivo Principal...' : 'Enviando para Nuvem...';
+                const fileUrl = await uploadToCloudinary(fileInput.files[0]);
 
-                // 2. Enviar os dados (Título e Link do Cloudinary) para o Google Sheets
+                if (!fileUrl) throw new Error("Erro no upload principal.");
+
+                // Salvar tudo na planilha
                 btn.innerText = 'Salvando dados...';
                 await fetch(WEB_APP_URL, {
                     method: 'POST',
                     body: JSON.stringify({
                         action: 'addItem',
                         titulo: titulo,
+                        descricao: desc,
                         categoria: categoria,
                         tipo: tipo,
-                        fileUrl: fileUrl // Agora mandamos só a URL pronta!
+                        fileUrl: fileUrl,
+                        capaUrl: capaUrl
                     })
                 });
 
                 document.getElementById('item-title').value = '';
+                document.getElementById('item-desc').value = '';
                 fileInput.value = '';
+                coverInput.value = '';
                 btn.innerText = 'Fazer Upload';
                 btn.disabled = false;
-                toggleAdmin();
+                closeAdmin();
                 carregarDados();
 
             } catch (error) {
