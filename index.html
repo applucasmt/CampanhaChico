@@ -307,7 +307,12 @@
 
     <script>
         // ====================================================================
+        // 1. DADOS DO GOOGLE APPS SCRIPT
         const WEB_APP_URL = "https://script.google.com/macros/s/AKfycbzWzIg8eyb9LMx82AD25XB9E9ypBcMFMpITZ-zOKWFKf7P2ywAnqqAypZQoIOxngclH4w/exec"; 
+        
+        // 2. DADOS DO CLOUDINARY
+        const CLOUDINARY_CLOUD_NAME = "gyzeubzm"; 
+        const CLOUDINARY_UPLOAD_PRESET = "ml_default"; 
         // ====================================================================
 
         let allItems = [];
@@ -362,23 +367,18 @@
             filtrados.forEach(item => {
                 let mediaHtml = '';
                 
-                // Montando a URL dinamicamente no frontend com o idDrive
-                const fileUrl = `https://drive.google.com/uc?id=${item.idDrive}`;
-                
+                // O link vem direto do Cloudinary, super limpo e rápido!
                 if (item.tipo === 'imagem') {
-                    mediaHtml = `<div class="media-container"><img src="${fileUrl}" alt="${item.titulo}" loading="lazy"></div>`;
+                    mediaHtml = `<div class="media-container"><img src="${item.url}" alt="${item.titulo}" loading="lazy"></div>`;
                 } 
                 else if (item.tipo === 'video') {
-                    mediaHtml = `<div class="media-container"><video src="${fileUrl}" controls preload="metadata"></video></div>`;
+                    mediaHtml = `<div class="media-container"><video src="${item.url}" controls preload="metadata"></video></div>`;
                 } 
                 else if (item.tipo === 'audio') {
-                    // SUBSTITUÍDO TEMPORARIAMENTE PELO PLAYER HARDCODED PARA TESTE
                     mediaHtml = `
                     <div class="audio-wrapper">
                         <div class="audio-icon">🎵</div>
-                        <audio controls crossorigin="anonymous">
-                            <source src="https://drive.google.com/uc?id=1i684Ce8D59PLVL4u1J0jeI1i1AdKAier">
-                        </audio>
+                        <audio controls preload="metadata" src="${item.url}"></audio>
                     </div>`;
                 }
 
@@ -425,14 +425,31 @@
             if (!titulo || !fileInput.files[0]) return alert('Preencha o título e selecione um arquivo.');
 
             const file = fileInput.files[0];
-            const reader = new FileReader();
-
-            btn.innerText = 'Enviando...';
+            btn.innerText = 'Enviando para Nuvem...';
             btn.disabled = true;
 
-            reader.onload = async function() {
-                const base64Str = reader.result.split(',')[1];
+            try {
+                // 1. Enviar arquivo para o Cloudinary primeiro
+                const formData = new FormData();
+                formData.append('file', file);
+                formData.append('upload_preset', CLOUDINARY_UPLOAD_PRESET);
+
+                // O endpoint 'auto' reconhece sozinho se é imagem, vídeo ou áudio (raw)
+                const cloudinaryResponse = await fetch(`https://api.cloudinary.com/v1_1/${CLOUDINARY_CLOUD_NAME}/auto/upload`, {
+                    method: 'POST',
+                    body: formData
+                });
                 
+                const cloudinaryData = await cloudinaryResponse.json();
+
+                if (!cloudinaryData.secure_url) {
+                    throw new Error("Erro no upload do Cloudinary. Verifique o Upload Preset.");
+                }
+
+                const fileUrl = cloudinaryData.secure_url;
+
+                // 2. Enviar os dados (Título e Link do Cloudinary) para o Google Sheets
+                btn.innerText = 'Salvando dados...';
                 await fetch(WEB_APP_URL, {
                     method: 'POST',
                     body: JSON.stringify({
@@ -440,9 +457,7 @@
                         titulo: titulo,
                         categoria: categoria,
                         tipo: tipo,
-                        filename: file.name,
-                        mimeType: file.type,
-                        base64: base64Str
+                        fileUrl: fileUrl // Agora mandamos só a URL pronta!
                     })
                 });
 
@@ -452,9 +467,12 @@
                 btn.disabled = false;
                 toggleAdmin();
                 carregarDados();
-            };
 
-            reader.readAsDataURL(file);
+            } catch (error) {
+                alert("Erro: " + error.message);
+                btn.innerText = 'Fazer Upload';
+                btn.disabled = false;
+            }
         }
 
         carregarDados();
