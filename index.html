@@ -11,7 +11,6 @@
             --glass-bg: rgba(255, 255, 255, 0.1);
             --glass-border: rgba(255, 255, 255, 0.2);
             --apple-font: -apple-system, BlinkMacSystemFont, "SF Pro Text", "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
-            --player-bg: #181818;
         }
 
         * { box-sizing: border-box; margin: 0; padding: 0; }
@@ -25,7 +24,7 @@
             display: flex;
             flex-direction: column;
             -webkit-font-smoothing: antialiased;
-            padding-bottom: 120px; 
+            padding-bottom: 150px; /* Mais espaço para o player no final da página */
         }
 
         .glass-panel {
@@ -65,35 +64,83 @@
         .audio-card:hover .play-btn-overlay { opacity: 1; transform: translateY(0); }
 
         /* =========================================
-           PLAYER GLOBAL PERSONALIZADO (NOVO VISUAL)
+           PLAYER GLOBAL RESPONSIVO & SPECTRUM
            ========================================= */
-        .global-player { position: fixed; bottom: 20px; left: 50%; transform: translateX(-50%) translateY(150%); width: 95%; max-width: 800px; background: rgba(24, 24, 24, 0.95); backdrop-filter: blur(25px); -webkit-backdrop-filter: blur(25px); border: 1px solid rgba(255,255,255,0.1); border-radius: 24px; display: flex; align-items: center; justify-content: space-between; padding: 12px 20px 12px 12px; z-index: 9999; box-shadow: 0 20px 40px rgba(0,0,0,0.6); transition: transform 0.5s cubic-bezier(0.25, 0.8, 0.25, 1); }
+        .global-player { 
+            position: fixed; 
+            bottom: 20px; left: 50%; 
+            transform: translateX(-50%) translateY(150%); 
+            width: 95%; max-width: 900px; 
+            background: rgba(24, 24, 24, 0.95); 
+            backdrop-filter: blur(25px); -webkit-backdrop-filter: blur(25px); 
+            border: 1px solid rgba(255,255,255,0.1); 
+            border-radius: 100px; /* Bordas bem redondas no desktop */
+            display: flex; 
+            align-items: center; 
+            gap: 20px;
+            padding: 10px 20px 10px 10px; 
+            z-index: 9999; 
+            box-shadow: 0 20px 40px rgba(0,0,0,0.6); 
+            transition: transform 0.5s cubic-bezier(0.25, 0.8, 0.25, 1), border-radius 0.3s; 
+        }
+        
         .global-player.active { transform: translateX(-50%) translateY(0); }
         
-        .track-info { display: flex; align-items: center; gap: 15px; width: 35%; min-width: 180px; }
-        .track-info img { width: 55px; height: 55px; border-radius: 12px; object-fit: cover; box-shadow: 0 4px 10px rgba(0,0,0,0.3); }
-        .track-text { display: flex; flex-direction: column; overflow: hidden; white-space: nowrap; }
-        .track-text h4 { font-size: 1rem; margin: 0; color: #fff; text-overflow: ellipsis; overflow: hidden; }
-        .track-text p { font-size: 0.8rem; margin: 0; color: #aaa; text-overflow: ellipsis; overflow: hidden; }
+        .track-info { display: flex; align-items: center; gap: 15px; flex: 1; min-width: 0; }
+        .track-info img { width: 55px; height: 55px; border-radius: 50%; object-fit: cover; box-shadow: 0 4px 10px rgba(0,0,0,0.3); flex-shrink: 0; }
+        .track-text { display: flex; flex-direction: column; overflow: hidden; }
         
-        .custom-player-controls { display: flex; align-items: center; gap: 15px; width: 55%; justify-content: center; }
+        .title-wrapper { display: flex; align-items: center; gap: 10px; }
+        .track-text h4 { font-size: 1rem; margin: 0; color: #fff; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+        .track-text p { font-size: 0.8rem; margin: 0; color: #aaa; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
         
-        /* Botão Play/Pause Redondo */
-        .play-pause-btn { background: #fff; color: #000; border: none; width: 40px; height: 40px; border-radius: 50%; font-size: 1.2rem; display: flex; justify-content: center; align-items: center; cursor: pointer; transition: transform 0.2s; }
+        /* Audio Spectrum Visualizer */
+        .visualizer { display: flex; align-items: flex-end; gap: 3px; height: 16px; margin-bottom: 2px; flex-shrink: 0; }
+        .visualizer .bar { width: 3px; background-color: var(--verde-limao); border-radius: 2px; animation: eq 1.2s ease-in-out infinite alternate; transform-origin: bottom; }
+        .visualizer.paused .bar { animation-play-state: paused; height: 3px !important; transition: height 0.3s ease; }
+        
+        /* Alturas e velocidades diferentes para parecer real */
+        .bar:nth-child(1) { height: 8px; animation-delay: 0.1s; animation-duration: 0.6s; }
+        .bar:nth-child(2) { height: 16px; animation-delay: 0.3s; animation-duration: 0.8s; }
+        .bar:nth-child(3) { height: 12px; animation-delay: 0.0s; animation-duration: 0.7s; }
+        .bar:nth-child(4) { height: 14px; animation-delay: 0.2s; animation-duration: 0.5s; }
+        .bar:nth-child(5) { height: 9px; animation-delay: 0.4s; animation-duration: 0.9s; }
+        
+        @keyframes eq {
+            0% { height: 3px; }
+            100% { height: 16px; }
+        }
+
+        .custom-player-controls { display: flex; align-items: center; gap: 15px; flex: 2; width: 100%; }
+        
+        .play-pause-btn { background: #fff; color: #000; border: none; width: 45px; height: 45px; border-radius: 50%; font-size: 1.2rem; display: flex; justify-content: center; align-items: center; cursor: pointer; transition: transform 0.2s; flex-shrink: 0; }
         .play-pause-btn:hover { transform: scale(1.05); }
         
-        /* Barra de Progresso */
-        .progress-wrapper { display: flex; align-items: center; gap: 10px; flex: 1; max-width: 400px; }
-        .time-text { font-size: 0.75rem; color: #aaa; min-width: 35px; text-align: center; }
+        .progress-wrapper { display: flex; align-items: center; gap: 10px; flex: 1; }
+        .time-text { font-size: 0.75rem; color: #aaa; width: 35px; text-align: center; font-variant-numeric: tabular-nums; flex-shrink: 0; }
         
-        input[type=range] { -webkit-appearance: none; width: 100%; background: transparent; cursor: pointer; }
+        input[type=range] { -webkit-appearance: none; width: 100%; flex: 1; background: transparent; cursor: pointer; }
         input[type=range]:focus { outline: none; }
-        input[type=range]::-webkit-slider-runnable-track { width: 100%; height: 5px; background: rgba(255,255,255,0.2); border-radius: 5px; }
-        input[type=range]::-webkit-slider-thumb { -webkit-appearance: none; height: 12px; width: 12px; border-radius: 50%; background: var(--verde-limao); margin-top: -3.5px; transition: transform 0.1s; }
-        input[type=range]:hover::-webkit-slider-thumb { transform: scale(1.2); }
+        input[type=range]::-webkit-slider-runnable-track { width: 100%; height: 6px; background: rgba(255,255,255,0.2); border-radius: 5px; }
+        input[type=range]::-webkit-slider-thumb { -webkit-appearance: none; height: 14px; width: 14px; border-radius: 50%; background: var(--verde-limao); margin-top: -4px; transition: transform 0.1s; }
+        input[type=range]:hover::-webkit-slider-thumb { transform: scale(1.3); }
         
-        .close-player { background: none; border: none; color: #aaa; font-size: 1.5rem; cursor: pointer; padding: 0 10px; transition: color 0.3s; margin-left: 10px; }
+        .close-player { background: none; border: none; color: #aaa; font-size: 1.5rem; cursor: pointer; padding: 0 5px; transition: color 0.3s; flex-shrink: 0; }
         .close-player:hover { color: #fff; }
+
+        /* Adaptação Perfeita para Celulares */
+        @media (max-width: 650px) {
+            .global-player {
+                flex-direction: column; /* Empilha os itens no celular */
+                border-radius: 20px; /* Borda mais quadrada para celular */
+                padding: 15px;
+                gap: 15px;
+            }
+            .track-info { width: 100%; padding-right: 30px; /* Espaço para o X */ }
+            .track-info img { border-radius: 12px; } /* Foto quadrada redondinha no celular */
+            .custom-player-controls { width: 100%; }
+            .close-player { position: absolute; top: 15px; right: 15px; }
+        }
 
         footer { text-align: center; padding: 20px; margin-top: auto; }
         .admin-icon { cursor: pointer; font-size: 1.5rem; opacity: 0.5; transition: opacity 0.3s; }
@@ -129,12 +176,19 @@
         <div class="loading">Sincronizando arquivos...</div>
     </div>
 
-    <!-- PLAYER GLOBAL CUSTOMIZADO -->
+    <!-- PLAYER GLOBAL CUSTOMIZADO E RESPONSIVO -->
     <div class="global-player" id="global-player">
         <div class="track-info">
             <img id="player-cover" src="" alt="Capa">
             <div class="track-text">
-                <h4 id="player-title" title="Título">Título</h4>
+                <div class="title-wrapper">
+                    <h4 id="player-title" title="Título">Título</h4>
+                    <!-- Espectro de Áudio (Barrinhas que pulam) -->
+                    <div class="visualizer paused" id="audio-visualizer">
+                        <div class="bar"></div><div class="bar"></div>
+                        <div class="bar"></div><div class="bar"></div><div class="bar"></div>
+                    </div>
+                </div>
                 <p id="player-desc" title="Descrição">Descrição</p>
             </div>
         </div>
@@ -149,8 +203,7 @@
         </div>
 
         <button class="close-player" onclick="closePlayer()">✕</button>
-        <!-- Áudio Oculto (quem toca a música de verdade) -->
-        <audio id="main-audio" style="display: none;"></audio>
+        <audio id="main-audio" style="display: none;" crossorigin="anonymous"></audio>
     </div>
 
     <footer>
@@ -195,9 +248,7 @@
 
     <script>
         // ====================================================================
-        // COLE AQUI A NOVA URL QUE VOCÊ GEROU NO APPS SCRIPT
         const WEB_APP_URL = "https://script.google.com/macros/s/AKfycbzWzIg8eyb9LMx82AD25XB9E9ypBcMFMpITZ-zOKWFKf7P2ywAnqqAypZQoIOxngclH4w/exec"; 
-        
         const CLOUDINARY_CLOUD_NAME = "gyzeubzm"; 
         const CLOUDINARY_UPLOAD_PRESET = "ml_default"; 
         // ====================================================================
@@ -263,7 +314,6 @@
                         </div>`;
                 } 
                 else if (item.tipo === 'audio') {
-                    // Se não tiver capa, usa essa imagem legal padrão
                     const defaultCover = `https://ui-avatars.com/api/?name=%E2%99%AB&background=d4ff33&color=4B5320&size=256&font-size=0.5`;
                     const coverImg = item.capa ? item.capa : defaultCover;
                     
@@ -288,13 +338,14 @@
         }
 
         // ==========================================
-        // LÓGICA DO PLAYER DE ÁUDIO CUSTOMIZADO
+        // LÓGICA DO PLAYER E ESPECTRO DE ÁUDIO
         // ==========================================
         const audioEl = document.getElementById('main-audio');
         const playBtn = document.getElementById('play-pause-btn');
         const seekBar = document.getElementById('seek-bar');
         const currentTimeText = document.getElementById('current-time');
         const totalTimeText = document.getElementById('total-time');
+        const visualizer = document.getElementById('audio-visualizer');
 
         function openSpotifyPlayer(url, title, desc, coverUrl) {
             const player = document.getElementById('global-player');
@@ -306,16 +357,20 @@
             audioEl.src = url;
             player.classList.add('active');
             audioEl.play();
-            playBtn.innerText = '⏸'; // Atualiza ícone para Pause
+            
+            playBtn.innerText = '⏸';
+            visualizer.classList.remove('paused'); // Liga animação das barras
         }
 
         function togglePlay() {
             if (audioEl.paused) {
                 audioEl.play();
                 playBtn.innerText = '⏸';
+                visualizer.classList.remove('paused');
             } else {
                 audioEl.pause();
                 playBtn.innerText = '▶';
+                visualizer.classList.add('paused');
             }
         }
 
@@ -324,9 +379,10 @@
             player.classList.remove('active');
             audioEl.pause();
             audioEl.currentTime = 0;
+            visualizer.classList.add('paused');
         }
 
-        // Formata o tempo em Minutos:Segundos
+        // Formata tempo (Ex: 1:14)
         function formatTime(seconds) {
             if (isNaN(seconds)) return "0:00";
             let min = Math.floor(seconds / 60);
@@ -335,7 +391,7 @@
             return `${min}:${sec}`;
         }
 
-        // Atualiza a barra enquanto a música toca
+        // Atualiza a barra de progresso tocando
         audioEl.addEventListener('timeupdate', () => {
             if (audioEl.duration) {
                 const progressPercent = (audioEl.currentTime / audioEl.duration) * 100;
@@ -344,24 +400,22 @@
             }
         });
 
-        // Pega o tempo total quando a música carrega
         audioEl.addEventListener('loadedmetadata', () => {
             totalTimeText.innerText = formatTime(audioEl.duration);
         });
 
-        // Quando o usuário arrasta a barra
+        // Permitir que o usuário arraste a barra e pule a música
         seekBar.addEventListener('input', () => {
             const seekTo = audioEl.duration * (seekBar.value / 100);
             audioEl.currentTime = seekTo;
         });
 
-        // Quando a música acaba
         audioEl.addEventListener('ended', () => {
             playBtn.innerText = '▶';
+            visualizer.classList.add('paused'); // Desliga animação quando acaba
             seekBar.value = 0;
             currentTimeText.innerText = "0:00";
         });
-
 
         // ==========================================
         // PAINEL ADMINISTRATIVO E SENHA
@@ -427,7 +481,6 @@
 
             try {
                 let capaUrl = "";
-                // Confere se é áudio E se o usuário selecionou uma imagem
                 if (tipo === 'audio' && coverInput.files.length > 0) {
                     btn.innerText = '1/2: Enviando Capa...';
                     capaUrl = await uploadToCloudinary(coverInput.files[0]);
