@@ -26,7 +26,7 @@
             display: flex;
             flex-direction: column;
             -webkit-font-smoothing: antialiased;
-            padding-bottom: 100px; /* Espaço para o player global */
+            padding-bottom: 100px; 
         }
 
         .glass-panel {
@@ -50,7 +50,6 @@
 
         .portfolio-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 25px; padding: 0 20px 40px; max-width: 1200px; margin: 0 auto; flex: 1; width: 100%; }
 
-        /* Estilo Geral de Cards */
         .portfolio-card { padding: 16px; display: flex; flex-direction: column; gap: 16px; transition: transform 0.4s ease, box-shadow 0.4s ease; cursor: pointer; }
         .portfolio-card:hover { transform: translateY(-8px); box-shadow: 0 15px 35px rgba(0,0,0,0.25); }
         .portfolio-card h3 { font-size: 1.1rem; font-weight: 600; color: #fff; margin-bottom: 4px; }
@@ -59,7 +58,7 @@
         .media-container { width: 100%; border-radius: 12px; overflow: hidden; background: rgba(0,0,0,0.3); display: flex; justify-content: center; align-items: center; aspect-ratio: 16/9; }
         .media-container img, .media-container video { width: 100%; height: 100%; object-fit: cover; }
 
-        /* Estilo Áudio Spotify Card */
+        /* Estilo Spotify para Áudios */
         .audio-card { background: rgba(0,0,0,0.4); border-radius: 16px; position: relative; }
         .audio-cover-wrapper { width: 100%; aspect-ratio: 1/1; border-radius: 12px; overflow: hidden; position: relative; margin-bottom: 15px; box-shadow: 0 8px 24px rgba(0,0,0,0.4); }
         .audio-cover-wrapper img { width: 100%; height: 100%; object-fit: cover; transition: transform 0.3s; }
@@ -67,7 +66,7 @@
         .play-btn-overlay { position: absolute; bottom: 10px; right: 10px; background: var(--verde-limao); color: var(--verde-militar); width: 45px; height: 45px; border-radius: 50%; display: flex; justify-content: center; align-items: center; font-size: 1.5rem; opacity: 0; transform: translateY(10px); transition: all 0.3s; box-shadow: 0 8px 16px rgba(0,0,0,0.3); padding-left: 4px; }
         .audio-card:hover .play-btn-overlay { opacity: 1; transform: translateY(0); }
 
-        /* Player Global (Rodapé Flutuante) */
+        /* Player Global Flutuante */
         .global-player { position: fixed; bottom: 20px; left: 50%; transform: translateX(-50%) translateY(150%); width: 95%; max-width: 900px; background: rgba(20, 20, 20, 0.95); backdrop-filter: blur(20px); border: 1px solid rgba(255,255,255,0.1); border-radius: 100px; display: flex; align-items: center; justify-content: space-between; padding: 10px 20px 10px 10px; z-index: 9999; box-shadow: 0 20px 40px rgba(0,0,0,0.5); transition: transform 0.5s cubic-bezier(0.25, 0.8, 0.25, 1); }
         .global-player.active { transform: translateX(-50%) translateY(0); }
         .track-info { display: flex; align-items: center; gap: 15px; width: 30%; min-width: 150px; }
@@ -119,8 +118,8 @@
         <div class="track-info">
             <img id="player-cover" src="" alt="Capa">
             <div class="track-text">
-                <h4 id="player-title">Título da Música</h4>
-                <p id="player-desc">Descrição breve</p>
+                <h4 id="player-title">Título</h4>
+                <p id="player-desc">Descrição</p>
             </div>
         </div>
         <div class="track-controls">
@@ -133,6 +132,7 @@
         <span class="admin-icon" onclick="checkPassword()">🔒</span>
     </footer>
 
+    <!-- Painel de Administrador (Protegido) -->
     <div class="admin-modal" id="admin-modal">
         <div class="glass-panel admin-content">
             <span class="close-admin" onclick="closeAdmin()">✕</span>
@@ -155,7 +155,6 @@
                 <input type="text" id="item-title" placeholder="Nome do Projeto">
                 <textarea id="item-desc" placeholder="Descrição do Projeto (Opcional)" rows="2"></textarea>
                 
-                <!-- Extra para Áudio -->
                 <div id="audio-extras" style="display: none; background: rgba(0,0,0,0.2); padding: 15px; border-radius: 12px; margin-bottom: 12px;">
                     <span class="helper-text">Capa do Áudio (Imagem Quadrada)</span>
                     <input type="file" id="item-cover" accept="image/*">
@@ -171,10 +170,7 @@
 
     <script>
         // ====================================================================
-        // COLOQUE A SUA NOVA URL DO WEB APP AQUI!
         const WEB_APP_URL = "https://script.google.com/macros/s/AKfycbzWzIg8eyb9LMx82AD25XB9E9ypBcMFMpITZ-zOKWFKf7P2ywAnqqAypZQoIOxngclH4w/exec"; 
-        
-        // DADOS DO CLOUDINARY
         const CLOUDINARY_CLOUD_NAME = "gyzeubzm"; 
         const CLOUDINARY_UPLOAD_PRESET = "ml_default"; 
         // ====================================================================
@@ -241,11 +237,9 @@
                         </div>`;
                 } 
                 else if (item.tipo === 'audio') {
-                    // Capa padrão caso o usuário não envie nenhuma
                     const defaultCover = `https://ui-avatars.com/api/?name=%E2%99%AB&background=d4ff33&color=4B5320&size=256&font-size=0.5`;
                     const coverImg = item.capa ? item.capa : defaultCover;
                     
-                    // Escapando aspas para não quebrar o clique
                     const safeTitle = item.titulo.replace(/'/g, "\\'");
                     const safeDesc = item.descricao ? item.descricao.replace(/'/g, "\\'") : '';
                     
@@ -266,9 +260,6 @@
             });
         }
 
-        // ==========================================
-        // PLAYER GLOBAL TIPO SPOTIFY
-        // ==========================================
         function openSpotifyPlayer(url, title, desc, coverUrl) {
             const player = document.getElementById('global-player');
             const audioEl = document.getElementById('main-audio');
@@ -353,19 +344,16 @@
 
             try {
                 let capaUrl = "";
-                // Se for áudio e tiver enviado capa, faz upload da capa primeiro
                 if (tipo === 'audio' && coverInput.files[0]) {
                     btn.innerText = '1/2: Enviando Capa...';
                     capaUrl = await uploadToCloudinary(coverInput.files[0]);
                 }
 
-                // Upload do arquivo principal (Video, Audio ou Imagem)
                 btn.innerText = (tipo === 'audio' && coverInput.files[0]) ? '2/2: Enviando Arquivo Principal...' : 'Enviando para Nuvem...';
                 const fileUrl = await uploadToCloudinary(fileInput.files[0]);
 
                 if (!fileUrl) throw new Error("Erro no upload principal.");
 
-                // Salvar tudo na planilha
                 btn.innerText = 'Salvando dados...';
                 await fetch(WEB_APP_URL, {
                     method: 'POST',
