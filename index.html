@@ -3,187 +3,240 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Portfólio</title>
+    <title>Portfólio Profissional</title>
     <style>
-        /* Estilo Apple e Cores Solicitadas */
         :root {
             --verde-militar: #4B5320;
             --verde-limao: #d4ff33;
-            --glass-bg: rgba(255, 255, 255, 0.15);
-            --glass-border: rgba(255, 255, 255, 0.3);
+            --glass-bg: rgba(255, 255, 255, 0.1);
+            --glass-border: rgba(255, 255, 255, 0.2);
+            --apple-font: -apple-system, BlinkMacSystemFont, "SF Pro Text", "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
         }
 
         body {
-            margin: 0;
-            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
-            background: linear-gradient(135deg, var(--verde-militar), var(--verde-limao));
+            font-family: var(--apple-font);
+            background: linear-gradient(135deg, var(--verde-militar), #6e7a2f, var(--verde-limao));
             background-attachment: fixed;
             color: #fff;
             min-height: 100vh;
             display: flex;
             flex-direction: column;
+            -webkit-font-smoothing: antialiased;
         }
 
-        /* Efeito Glassmorphism (Vidro Fosco) Apple */
-        .glass {
+        .glass-panel {
             background: var(--glass-bg);
-            backdrop-filter: blur(20px);
-            -webkit-backdrop-filter: blur(20px);
+            backdrop-filter: blur(25px);
+            -webkit-backdrop-filter: blur(25px);
             border: 1px solid var(--glass-border);
-            border-radius: 24px;
-            box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.2);
+            border-radius: 20px;
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.15);
         }
 
         header {
             text-align: center;
-            padding: 40px 20px 20px;
+            padding: 50px 20px 30px;
         }
 
         header h1 {
             font-weight: 700;
-            letter-spacing: -1px;
-            margin: 0;
-            font-size: 2.5rem;
-            text-shadow: 0 2px 10px rgba(0,0,0,0.3);
+            font-size: 2.8rem;
+            letter-spacing: -1.2px;
+            margin-bottom: 10px;
+            text-shadow: 0 4px 15px rgba(0,0,0,0.2);
         }
 
-        /* Filtro de Categorias */
-        .categories {
+        /* --- Estilo Apple Tabs (Segmented Control) --- */
+        .tabs-wrapper {
             display: flex;
             justify-content: center;
-            gap: 10px;
-            padding: 20px;
-            flex-wrap: wrap;
+            padding: 0 20px;
+            margin-bottom: 40px;
         }
 
-        .cat-btn {
-            background: rgba(0,0,0,0.3);
-            border: 1px solid var(--glass-border);
-            color: white;
+        .tabs-container {
+            display: flex;
+            background: rgba(0, 0, 0, 0.25);
+            padding: 6px;
+            border-radius: 16px;
+            backdrop-filter: blur(15px);
+            -webkit-backdrop-filter: blur(15px);
+            overflow-x: auto;
+            max-width: 100%;
+            scrollbar-width: none; /* Esconde scrollbar no Firefox */
+        }
+        
+        .tabs-container::-webkit-scrollbar {
+            display: none; /* Esconde scrollbar no Chrome/Safari */
+        }
+
+        .tab-btn {
+            background: transparent;
+            border: none;
+            color: rgba(255, 255, 255, 0.7);
             padding: 10px 24px;
-            border-radius: 30px;
+            border-radius: 12px;
             cursor: pointer;
             font-size: 1rem;
-            transition: all 0.3s ease;
+            font-weight: 500;
+            transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
+            white-space: nowrap;
         }
 
-        .cat-btn:hover, .cat-btn.active {
+        .tab-btn:hover {
+            color: #fff;
+        }
+
+        .tab-btn.active {
             background: var(--verde-limao);
             color: var(--verde-militar);
-            border-color: var(--verde-limao);
-            font-weight: bold;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+            font-weight: 600;
         }
 
-        /* Grid de Portfólio */
+        /* --- Grid e Cards --- */
         .portfolio-grid {
             display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
-            gap: 20px;
-            padding: 20px;
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            gap: 25px;
+            padding: 0 20px 40px;
             max-width: 1200px;
             margin: 0 auto;
             flex: 1;
+            width: 100%;
         }
 
         .portfolio-card {
-            padding: 20px;
+            padding: 16px;
             display: flex;
             flex-direction: column;
-            gap: 15px;
-            transition: transform 0.3s ease;
+            gap: 16px;
+            transition: transform 0.4s ease, box-shadow 0.4s ease;
         }
 
         .portfolio-card:hover {
-            transform: translateY(-5px);
+            transform: translateY(-8px);
+            box-shadow: 0 15px 35px rgba(0,0,0,0.25);
         }
 
         .portfolio-card h3 {
-            margin: 0;
-            font-size: 1.2rem;
+            font-size: 1.1rem;
+            font-weight: 600;
             text-align: center;
+            color: #f1f1f1;
         }
 
         .media-container {
             width: 100%;
             border-radius: 12px;
             overflow: hidden;
-            background: rgba(0,0,0,0.2);
+            background: rgba(0,0,0,0.3);
             display: flex;
             justify-content: center;
             align-items: center;
+            aspect-ratio: 16/9; /* Proporção profissional */
         }
 
         .media-container img, .media-container video {
             width: 100%;
-            height: auto;
-            max-height: 250px;
+            height: 100%;
             object-fit: cover;
         }
 
-        .media-container audio {
+        .audio-wrapper {
             width: 100%;
-            padding: 10px;
+            padding: 20px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            background: rgba(255,255,255,0.05);
+            border-radius: 12px;
         }
 
-        /* Rodapé e Admin */
+        .audio-wrapper audio {
+            width: 100%;
+            outline: none;
+        }
+
+        .audio-icon {
+            font-size: 3rem;
+            margin-bottom: 10px;
+            opacity: 0.8;
+        }
+
+        /* --- Rodapé e Admin --- */
         footer {
             text-align: center;
-            padding: 30px;
+            padding: 20px;
             margin-top: auto;
         }
 
         .admin-icon {
             cursor: pointer;
             font-size: 1.5rem;
-            opacity: 0.7;
+            opacity: 0.5;
             transition: opacity 0.3s;
         }
 
         .admin-icon:hover { opacity: 1; }
 
-        /* Painel Admin (Modal) */
+        /* --- Painel Admin --- */
         .admin-modal {
             position: fixed;
             top: 0; left: 0; width: 100%; height: 100%;
-            background: rgba(0,0,0,0.6);
+            background: rgba(0,0,0,0.7);
             display: none;
             justify-content: center;
             align-items: center;
             z-index: 1000;
+            backdrop-filter: blur(10px);
         }
 
         .admin-content {
-            padding: 30px;
+            padding: 35px;
             width: 90%;
-            max-width: 500px;
-            max-height: 90vh;
-            overflow-y: auto;
+            max-width: 450px;
             position: relative;
         }
 
         .close-admin {
             position: absolute;
-            top: 20px; right: 20px;
+            top: 20px; right: 25px;
             cursor: pointer;
-            font-weight: bold;
+            font-weight: 600;
             font-size: 1.2rem;
+            color: rgba(255,255,255,0.6);
         }
 
+        .close-admin:hover { color: #fff; }
+
         .admin-section {
-            margin-bottom: 30px;
-            background: rgba(0,0,0,0.2);
-            padding: 20px;
-            border-radius: 16px;
+            margin-bottom: 25px;
+        }
+
+        .admin-section h3 {
+            font-size: 1rem;
+            margin-bottom: 10px;
+            font-weight: 500;
+            color: var(--verde-limao);
         }
 
         input, select, button {
             width: 100%;
-            padding: 12px;
-            margin-top: 8px;
-            border-radius: 10px;
+            padding: 14px;
+            margin-bottom: 12px;
+            border-radius: 12px;
             border: none;
-            box-sizing: border-box;
             font-family: inherit;
+            font-size: 1rem;
+            outline: none;
         }
 
         input, select {
@@ -194,30 +247,37 @@
         button {
             background: var(--verde-limao);
             color: var(--verde-militar);
-            font-weight: bold;
+            font-weight: 700;
             cursor: pointer;
-            margin-top: 15px;
+            transition: opacity 0.3s;
         }
+
+        button:hover { opacity: 0.9; }
+        button:disabled { opacity: 0.5; cursor: not-allowed; }
 
         .loading {
             text-align: center;
-            padding: 40px;
+            padding: 50px;
             font-size: 1.2rem;
+            font-weight: 500;
+            grid-column: 1 / -1;
         }
     </style>
 </head>
 <body>
 
     <header>
-        <h1>Meu Portfólio</h1>
+        <h1>Portfólio</h1>
     </header>
 
-    <div class="categories" id="category-container">
-        <!-- Categorias serão injetadas aqui -->
+    <div class="tabs-wrapper">
+        <div class="tabs-container" id="category-container">
+            <!-- Abas injetadas via JS -->
+        </div>
     </div>
 
     <div class="portfolio-grid" id="portfolio-grid">
-        <div class="loading">Carregando portfólio...</div>
+        <div class="loading">Sincronizando arquivos...</div>
     </div>
 
     <footer>
@@ -226,39 +286,34 @@
 
     <!-- Painel Administrador -->
     <div class="admin-modal" id="admin-modal">
-        <div class="glass admin-content">
-            <span class="close-admin" onclick="toggleAdmin()">X</span>
-            <h2 style="margin-top: 0;">Painel de Controle</h2>
+        <div class="glass-panel admin-content">
+            <span class="close-admin" onclick="toggleAdmin()">✕</span>
+            <h2 style="margin-bottom: 20px; text-align: center;">Acesso Restrito</h2>
 
             <div class="admin-section">
-                <h3>Criar Nova Categoria</h3>
-                <input type="text" id="new-category-name" placeholder="Nome da Categoria">
-                <button onclick="addCategory()">Adicionar Categoria</button>
+                <h3>1. Nova Aba (Categoria)</h3>
+                <input type="text" id="new-category-name" placeholder="Ex: Vídeos Institucionais">
+                <button onclick="addCategory()" id="btn-add-cat">Criar Aba</button>
             </div>
 
             <div class="admin-section">
-                <h3>Adicionar Arquivo ao Portfólio</h3>
-                <input type="text" id="item-title" placeholder="Título do Trabalho">
-                
-                <select id="item-category">
-                    <!-- Opções injetadas via JS -->
-                </select>
-
+                <h3>2. Enviar Arquivo</h3>
+                <input type="text" id="item-title" placeholder="Nome do Projeto">
+                <select id="item-category"></select>
                 <select id="item-type">
                     <option value="imagem">Imagem</option>
                     <option value="video">Vídeo</option>
                     <option value="audio">Áudio</option>
                 </select>
-
                 <input type="file" id="item-file" accept="image/*,video/*,audio/*">
-                
-                <button onclick="addItem()" id="btn-add-item">Fazer Upload e Salvar</button>
+                <button onclick="addItem()" id="btn-add-item">Fazer Upload</button>
             </div>
         </div>
     </div>
 
     <script>
-        // COLOQUE A URL DO SEU GOOGLE APPS SCRIPT AQUI =======================
+        // ====================================================================
+        // COLOQUE A NOVA URL DO SEU GOOGLE APPS SCRIPT AQUI
         const WEB_APP_URL = "https://script.google.com/macros/s/AKfycbzWzIg8eyb9LMx82AD25XB9E9ypBcMFMpITZ-zOKWFKf7P2ywAnqqAypZQoIOxngclH4w/exec"; 
         // ====================================================================
 
@@ -270,11 +325,12 @@
                 const response = await fetch(WEB_APP_URL);
                 const data = await response.json();
                 
-                allItems = data.itens;
+                // Inverte os itens para mostrar os mais recentes primeiro
+                allItems = data.itens.reverse(); 
                 renderCategories(data.categorias);
                 renderItems();
             } catch (error) {
-                document.getElementById('portfolio-grid').innerHTML = "<p>Erro ao carregar dados.</p>";
+                document.getElementById('portfolio-grid').innerHTML = "<div class='loading'>Erro de conexão com o painel.</div>";
             }
         }
 
@@ -282,18 +338,18 @@
             const container = document.getElementById('category-container');
             const select = document.getElementById('item-category');
             
-            container.innerHTML = `<button class="cat-btn active" onclick="filterCategory('Todas', this)">Todas</button>`;
+            container.innerHTML = `<button class="tab-btn active" onclick="filterCategory('Todas', this)">Todas</button>`;
             select.innerHTML = '';
 
             categorias.forEach(cat => {
-                container.innerHTML += `<button class="cat-btn" onclick="filterCategory('${cat}', this)">${cat}</button>`;
+                container.innerHTML += `<button class="tab-btn" onclick="filterCategory('${cat}', this)">${cat}</button>`;
                 select.innerHTML += `<option value="${cat}">${cat}</option>`;
             });
         }
 
         function filterCategory(cat, btnElement) {
             currentCategory = cat;
-            document.querySelectorAll('.cat-btn').forEach(btn => btn.classList.remove('active'));
+            document.querySelectorAll('.tab-btn').forEach(btn => btn.classList.remove('active'));
             btnElement.classList.add('active');
             renderItems();
         }
@@ -307,19 +363,32 @@
                 : allItems.filter(item => item.categoria === currentCategory);
 
             if (filtrados.length === 0) {
-                grid.innerHTML = "<p style='text-align:center; width:100%;'>Nenhum item nesta categoria.</p>";
+                grid.innerHTML = "<div class='loading'>Nenhum trabalho nesta aba ainda.</div>";
                 return;
             }
 
             filtrados.forEach(item => {
                 let mediaHtml = '';
-                if (item.tipo === 'imagem') mediaHtml = `<img src="${item.url}" alt="${item.titulo}">`;
-                if (item.tipo === 'video') mediaHtml = `<video src="${item.url}" controls></video>`;
-                if (item.tipo === 'audio') mediaHtml = `<audio src="${item.url}" controls></audio>`;
+                
+                if (item.tipo === 'imagem') {
+                    mediaHtml = `<div class="media-container"><img src="${item.url}" alt="${item.titulo}" loading="lazy"></div>`;
+                } 
+                else if (item.tipo === 'video') {
+                    // Preload metadata ajuda no carregamento de vídeos do Drive
+                    mediaHtml = `<div class="media-container"><video src="${item.url}" controls preload="metadata"></video></div>`;
+                } 
+                else if (item.tipo === 'audio') {
+                    // Layout específico para áudio ficar mais bonito no grid
+                    mediaHtml = `
+                    <div class="audio-wrapper">
+                        <div class="audio-icon">🎵</div>
+                        <audio src="${item.url}" controls preload="metadata"></audio>
+                    </div>`;
+                }
 
                 grid.innerHTML += `
-                    <div class="glass portfolio-card">
-                        <div class="media-container">${mediaHtml}</div>
+                    <div class="glass-panel portfolio-card">
+                        ${mediaHtml}
                         <h3>${item.titulo}</h3>
                     </div>
                 `;
@@ -333,10 +402,11 @@
 
         async function addCategory() {
             const nome = document.getElementById('new-category-name').value;
-            if (!nome) return alert('Digite um nome!');
+            if (!nome) return alert('Digite o nome da aba!');
             
-            const btn = event.target;
-            btn.innerText = 'Salvando...';
+            const btn = document.getElementById('btn-add-cat');
+            btn.innerText = 'Criando...';
+            btn.disabled = true;
 
             await fetch(WEB_APP_URL, {
                 method: 'POST',
@@ -344,7 +414,8 @@
             });
 
             document.getElementById('new-category-name').value = '';
-            btn.innerText = 'Adicionar Categoria';
+            btn.innerText = 'Criar Aba';
+            btn.disabled = false;
             carregarDados();
         }
 
@@ -355,12 +426,12 @@
             const fileInput = document.getElementById('item-file');
             const btn = document.getElementById('btn-add-item');
 
-            if (!titulo || !fileInput.files[0]) return alert('Preencha título e selecione o arquivo.');
+            if (!titulo || !fileInput.files[0]) return alert('Preencha o título e selecione um arquivo.');
 
             const file = fileInput.files[0];
             const reader = new FileReader();
 
-            btn.innerText = 'Fazendo Upload... Aguarde';
+            btn.innerText = 'Enviando...';
             btn.disabled = true;
 
             reader.onload = async function() {
@@ -381,7 +452,7 @@
 
                 document.getElementById('item-title').value = '';
                 fileInput.value = '';
-                btn.innerText = 'Fazer Upload e Salvar';
+                btn.innerText = 'Fazer Upload';
                 btn.disabled = false;
                 toggleAdmin();
                 carregarDados();
@@ -390,7 +461,7 @@
             reader.readAsDataURL(file);
         }
 
-        // Inicia carregamento
+        // Inicia a aplicação
         carregarDados();
     </script>
 </body>
