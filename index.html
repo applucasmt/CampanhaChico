@@ -372,10 +372,13 @@
                     mediaHtml = `<div class="media-container"><video src="${fileUrl}" controls preload="metadata"></video></div>`;
                 } 
                 else if (item.tipo === 'audio') {
+                    // SUBSTITUÍDO TEMPORARIAMENTE PELO PLAYER HARDCODED PARA TESTE
                     mediaHtml = `
                     <div class="audio-wrapper">
                         <div class="audio-icon">🎵</div>
-                        <audio controls preload="metadata" src="${fileUrl}"></audio>
+                        <audio controls crossorigin="anonymous">
+                            <source src="https://drive.google.com/uc?id=1i684Ce8D59PLVL4u1J0jeI1i1AdKAier">
+                        </audio>
                     </div>`;
                 }
 
